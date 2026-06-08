@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>國標麻將幸福盃控台</title>
+  <style>
+    /* ========================================================= */
+    /* 第 1 部分：網頁頂部微縮、左右剛性滿版鋼骨外殼 CSS          */
+    /* ========================================================= */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #ffffff;
+      margin-top: -6px !important;
+    }
+
+    #main-container {
+      display: flex;
+      flex-direction: column;
+      width: 100% !important;
+      height: calc(var(--vh, 1vh) * 100);
+      position: relative;
+      z-index: 1;
+      padding-top: 0 !important;
+    }
+
+    /* 全區垂直滑動殼 */
+    #table-scroll-wrapper {
+      flex-grow: 1;
+      width: 100% !important;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      background-color: #ffffff;
+    }
+
+    #score-main-table {
+      width: 100% !important;
+      max-width: 100% !important;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    /* ========================================================= */
+    /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤 CSS               */
+    /* ========================================================= */
+    .sticky-header-row th, .sticky-header-row td {
+      position: sticky;
+      background-color: #ffffff;
+      z-index: 10;
+      box-shadow: inset 0 -1px 0 #cbd5e1;
+    }
+    .sticky-header-row th, .sticky-header-row td {
+      position: sticky;
+      background-color: #ffffff;
+      z-index: 10;
+      box-shadow: inset 0 -1px 0 #cbd5e1;
+    }
+    .sticky-row-1 th, .sticky-row-1 td { top: 0; z-index: 15; }
+    .sticky-row-1b th, .sticky-row-1b td { top: 42px; z-index: 14; }
+    .sticky-row-2 th, .sticky-row-2 td { top: 86px; }
+    .sticky-row-3 th, .sticky-row-3 td { top: 130px; }
+    .sticky-row-4 th, .sticky-row-4 td { top: 162px; }
+    .sticky-row-5 th, .sticky-row-5 td { top: 194px; }
+    .sticky-row-6 th, .sticky-row-6 td { top: 232px; }
+
+    .custom-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    /* 獨立大數字鍵盤排版 */
+    .keyboard-box {
+      width: 92%;
+      max-width: 310px;
+      background-color: #1e293b;
+      padding: 14px;
+      border-radius: 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .keyboard-screen {
+      background-color: #0f172a;
+      color: #38bdf8;
+      font-size: 26px;
+      font-weight: bold;
+      text-align: right;
+      padding: 10px 14px;
+      border-radius: 0;
+      margin-bottom: 12px;
+      min-height: 44px;
+    }
+    .keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .btn-key {
+      height: 66px; 
+      font-size: 22px;
+      font-weight: bold;
+      background-color: #334155;
+      color: white;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .btn-key:active { background-color: #475569; }
+    .btn-key-action { background-color: #ea580c; }
+    /* ========================================================= */
+    /* 第 3 部分：大數字鍵盤底部與合體計分盤外殼 CSS             */
+    /* ========================================================= */
+    .keyboard-footer-grid {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-footer-long {
+      flex: 1;
+      height: 52px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 0;
+      color: white;
+      cursor: pointer;
+    }
+    .btn-footer-back { background-color: #dc2626; }
+    .btn-footer-submit { background-color: #16a34a; }
+
+    /* 終極合體計分盤箱（大賽級高度極致壓縮，物理限制不滑動版） */
+    .combo-score-box {
+      width: 94%;
+      max-width: 315px;
+      background-color: #ffffff; 
+      border-radius: 0;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-sizing: border-box;
+      border: 3px solid #1e293b;
+    }
+
+    .combo-keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      padding: 6px;
+      background-color: #1e293b; 
+    }
+    .btn-combo-key {
+      height: 36px !important; /* 💡 剛性高度微縮，省下大量垂直空間 */
+      background-color: #334155;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+    }
+    .btn-combo-key:active { background-color: #475569; }
+    .btn-combo-key-action { background-color: #ea580c; }
+    
+    .combo-footer-horizontal {
+      display: flex;
+      gap: 8px;
+      padding: 0 10px 8px 10px;
+      background-color: #1e293b;
+      box-sizing: border-box;
+    }
+    .btn-combo-half {
+      flex: 1; 
+      height: 36px !important; /* 收尾功能按鈕一同緊湊化 */
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    .btn-combo-submit { background-color: #16a34a; color: white; }
+    .btn-combo-back { background-color: #dc2626; color: white; }
+    /* ========================================================= */
+    /* 第 4 部分：初始化設定彈窗樣式與計分大表單元格 CSS           */
+    /* 說明：全面取消特殊圖案，移除圓角，優化雙行姓名排版         */
+    /* ========================================================= */
+    .modal-content-box {
+      width: 92%;
+      max-width: 320px; 
+      max-height: 90vh;
+      background-color: #ffffff;
+      border-radius: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-body-scroll {
+      flex-grow: 1;
+      padding: 12px;
+      overflow-y: auto;
+    }
+    .modal-meta-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      background-color: #f1f5f9;
+      padding: 8px;
+      border-radius: 0;
+    }
+    .meta-item { flex: 1; }
+    .meta-item label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+    .input-meta-field {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      font-size: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 0;
+      text-align: center;
+    }
+    .seat-setup-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .seat-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 0;
+      padding: 8px;
+      background-color: #f8fafc;
+    }
+    .seat-label {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .seat-label.east  { color: #dc2626; }
+    .seat-label.south { color: #16a34a; }
+    .seat-label.west  { color: #ea580c; }
+    .seat-label.north { color: #2563eb; }
+    .input-player-no {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      font-size: 15px;
+      text-align: center;
+      border: 1px solid #94a3b8;
+      border-radius: 0;
+      margin-bottom: 5px;
+    }
+    .output-player-name {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 0;
+      background-color: #e2e8f0;
+      color: #334155;
+      font-weight: bold;
+    }
+    #score-main-table th, #score-main-table td {
+      border: 1px solid #cbd5e1;
+      text-align: center;
+      padding: 0 !important; 
+      font-size: 14px;
+      vertical-align: middle;
+      line-height: 1.3;
+    }
+    #score-main-table th.bg-navy, #score-main-table td.bg-navy { 
+      background-color: #1a365d !important; 
+      color: #ffffff !important; 
+    }
+    .bg-amber { background-color: #fef3c7; }
+    
+    .btn-round-trigger {
+      width: 100% !important;
+      height: 100% !important;
+      background-color: #475569;
+      color: white;
+      border: none;
+      border-radius: 0;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-round-trigger:active { background-color: #1e293b; }
+    /* ========================================================= */
+    /* 第 5 部分：尾部簽名樣式、排行高亮與大表欄架構 CSS             */
+    /* 說明：高對比度排版，取消所有特殊圖案，按鈕除圓角             */
+    /* ========================================================= */
+    .bg-tail-row { background-color: #f8fafc; font-weight: bold; }
+    .bg-tail-label { background-color: #334155; color: white; font-weight: bold; font-size: 13px; border: 1px solid #cbd5e1; }
+
+    .td-sign-container {
+      padding: 0 !important;
+      margin: 0 !important;
+      height: 44px !important; 
+    }
+    .btn-sign-common {
+      width: 100% !important;  
+      height: 100% !important; 
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      border-radius: 0 !important; 
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      display: block !important;
+    }
+    .btn-sign-a { background-color: #2563eb !important; color: white !important; }
+    .btn-sign-b { background-color: #16a34a !important; color: white !important; }
+    .btn-sign-c { background-color: #eab308 !important; color: #000000 !important; } 
+    .btn-sign-d { background-color: #dc2626 !important; color: white !important; }
+    .btn-sign-common:disabled {
+      background-color: #cbd5e1 !important;
+      color: #64748b !important;
+      cursor: not-allowed !important;
+    }
+
+    .selector-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .btn-select-box {
+      height: 44px; 
+      border: 1px solid #cbd5e1;
+      border-radius: 0;
+      background-color: #f8fafc;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .btn-select-box.active-a { background-color: #2563eb; color: white; border-color: #1d4ed8; }
+    .btn-select-box.active-b { background-color: #16a34a; color: white; border-color: #15803d; }
+    .btn-select-box.active-c { background-color: #eab308; color: #000000; border-color: #a16207; } 
+    .btn-select-box.active-d { background-color: #dc2626; color: white; border-color: #b91c1c; }
+
+    .p-rank-text {
+      font-size: 16px !important;
+      font-weight: 900 !important;
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+    }
+    .champion-gold-glow {
+      background-color: #fef08a !important; 
+      color: #854d0e !important;
+      font-weight: 900 !important;
+      box-shadow: inset 0 0 8px rgba(234,179,8,0.7) !important;
+    }
+    
+    .btn-top-gold {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 0;
+      color: white;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container">
+    <div id="table-scroll-wrapper">
+      <table id="score-main-table">
+        <!-- 5欄 100% 絕對等寬均分（各佔 20%），結構穩固 -->
+        <colgroup>
+          <col style="width: 20%;">
+          <col style="width: 20%;">
+          <col style="width: 20%;">
+          <col style="width: 20%;">
+          <col style="width: 20%;">
+        </colgroup>
+        <thead>
+          <!-- ========================================================= -->
+          <!-- 第 6 部分：大會官方大標題列與雙層主控列配置                 -->
+          <!-- 說明：取消所有特殊圖案，控制鈕100%剛性填滿高度，縮減日期顯示   -->
+          <!-- ========================================================= -->
+          
+          <!-- 大會官方滿版大標題列 -->
+          <tr class="sticky-header-row sticky-row-1">
+            <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
+              第一屆幸福盃國標麻將城市邀請賽
+            </th>
+          </tr>
+          
+          <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
+          <tr class="sticky-header-row sticky-row-1b">
+            <td style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" class="btn-top-gold" style="background-color: #2563eb; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0;" onclick="openSetupModal()">
+                初始化
+              </button>
+            </td>
+            <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
+              日期<br>
+              <!-- 💡 優化顯示：剛性縮減為 6 碼（026/06/06），騰出空間防止行動端溢出 -->
+              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">026/06/06</span>
+            </td>
+            <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
+              局次<br>
+              <span id="top-round-display" style="font-size: 14px; color: #1e3a8a; font-weight: bold; display: block;">1</span>
+            </td>
+            <th class="bg-navy" id="top-table-th-container" style="height: 44px; cursor: pointer; padding: 0; margin: 0; text-align: center; background-color: #1a365d; color: white; border: 1px solid #cbd5e1; vertical-align: middle;" onclick="triggerKeyboardForTable()">
+              <span id="top-table-display" style="font-size: 13px; font-weight: bold; display: block;">第 1 桌</span>
+              <span style="font-size: 10px; font-weight: normal; color: #93c5fd; display: block; margin-top: 1px;">變更</span>
+            </th>
+            <td style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" class="btn-top-gold" style="background-color: #dc2626; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0;" onclick="confirmClearCurrentRound()">
+                清空
+              </button>
+            </td>
+          </tr>
+
+          <!-- 主控列二：策略宣示、歷史紀錄調取、保存上傳 -->
+          <tr class="sticky-header-row sticky-row-2">
+            <td style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" class="btn-top-gold" style="background-color: #ea580c; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0;" onclick="openStrategyModal()">
+                策略
+              </button>
+            </td>
+            <td colspan="2" style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" class="btn-top-gold" style="background-color: #7c3aed; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0;" onclick="triggerLoadHistory()">
+                歷史紀錄
+              </button>
+            </td>
+            <td colspan="2" style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" class="btn-top-gold" style="background-color: #0d9488; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0;" onclick="saveAndLockCurrentRound()">
+                保存上傳成績
+              </button>
+            </td>
+          </tr>
+          <!-- ========================================================= -->
+          <!-- 第 7 部分：選手資訊抬頭列與風位對齊列                       -->
+          <!-- 說明：取消所有特殊圖案，預留雙行姓名換行空間，維持剛性等寬架構   -->
+          <!-- ========================================================= -->
+          
+          <!-- 選手編號列 -->
+          <tr class="sticky-header-row sticky-row-3 bg-amber">
+            <th style="height: 32px; font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">編號</th>
+            <td id="main-p1-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p2-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p3-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p4-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+          </tr>
+          
+          <!-- 選手姓名列（高度剛性配置 40px，完美相容 2x2 雙行換行排版） -->
+          <tr class="sticky-header-row sticky-row-4 bg-amber">
+            <th style="height: 40px; font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">姓名</th>
+            <td id="main-p1-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; word-break: break-all;">-</td>
+            <td id="main-p2-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; word-break: break-all;">-</td>
+            <td id="main-p3-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; word-break: break-all;">-</td>
+            <td id="main-p4-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; word-break: break-all;">-</td>
+          </tr>
+          
+          <!-- 累計總分列 -->
+          <tr class="sticky-header-row sticky-row-5">
+            <th style="height: 38px; font-weight: bold; background-color: #1e293b; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">累計</th>
+            <td id="main-p1-total" style="font-weight: bold; font-size: 16px; background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">0</td>
+            <td id="main-p2-total" style="font-weight: bold; font-size: 16px; background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">0</td>
+            <td id="main-p3-total" style="font-weight: bold; font-size: 16px; background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">0</td>
+            <td id="main-p4-total" style="font-weight: bold; font-size: 16px; background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">0</td>
+          </tr>
+          
+          <!-- 即時排名列 -->
+          <tr class="sticky-header-row sticky-row-6">
+            <th style="height: 32px; font-weight: bold; background-color: #1e293b; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">排名</th>
+            <td id="main-p1-rank" class="p-rank-text" style="background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p2-rank" class="p-rank-text" style="background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p3-rank" class="p-rank-text" style="background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+            <td id="main-p4-rank" class="p-rank-text" style="background-color: #ffffff; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
+          </tr>
+          
+          <!-- 方位盤次對齊抬頭列 -->
+          <tr style="background-color: #1e293b; color: white; font-size: 13px; font-weight: bold;">
+            <th style="height: 32px; background-color: #0f172a; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">盤次</th>
+            <td style="color: #fca5a5; background-color: #1e293b; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">東 (A)</td>
+            <td style="color: #86efac; background-color: #1e293b; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">南 (B)</td>
+            <td style="color: #fdbb74; background-color: #1e293b; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">西 (C)</td>
+            <td style="color: #93c5fd; background-color: #1e293b; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">北 (D)</td>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <!-- ========================================================= -->
+          <!-- 第 8 部分：核心對局區（1盤 至 16盤 剛性壓縮字元版）           -->
+          <!-- 說明：取消所有特殊圖案，字元改為 X盤，按鈕100%填滿全高        -->
+          <!-- ========================================================= -->
+          <script>
+            // 使用高效迴圈自動生成 1~16 盤數據列
+            // 剛性字元微縮：由「第 X 盤」縮減為「X盤」，徹底釋放空間防止爆行
+            for (var r = 1; r <= 16; r++) {
+              var rowBg = (r % 2 === 0) ? '#f8fafc' : '#ffffff';
+              document.write(
+                '<tr style="background-color: ' + rowBg + ';">' +
+                  '<td style="padding: 0; margin: 0; height: 44px; background-color: #f1f5f9; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle;">' +
+                    '<button type="button" class="btn-round-trigger" style="width: 100%; height: 100%; background-color: #475569; color: #ffffff; border: none; border-radius: 0; font-weight: bold; font-size: 13px; padding: 0; margin: 0; display: block; line-height: 44px;" onclick="openRoundScoreModal(' + r + ')">' +
+                      r + '盤' +
+                    '</button>' +
+                  '</td>' +
+                  '<td id="score-' + r + '-A" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
+                  '<td id="score-' + r + '-B" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
+                  '<td id="score-' + r + '-C" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
+                  '<td id="score-' + r + '-D" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
+                '</tr>'
+              );
+            }
+          </script>
+          <!-- ========================================================= -->
+          <!-- 第 9 部分：尾部四列大賽統計與確認簽名鋼骨區                 -->
+          <!-- 說明：取消所有特殊圖案，文字剛性限制為上下排各兩個字，填滿高度 -->
+          <!-- ========================================================= -->
+          
+          <!-- 1. 扣分調整列 -->
+          <tr class="bg-tail-row">
+            <td class="bg-tail-label" style="height: 44px; padding: 0; margin: 0; text-align: center; vertical-align: middle; font-weight: bold; background-color: #334155; color: #ffffff; font-size: 13px; border: 1px solid #cbd5e1; line-height: 1.2;">
+              扣分<br>調整
+            </td>
+            <td id="tail-p1-deduct" style="color: #dc2626; cursor: pointer; font-weight: bold; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle; font-size: 16px;" onclick="triggerKeyboardForDeduct(this, 'A')">0</td>
+            <td id="tail-p2-deduct" style="color: #dc2626; cursor: pointer; font-weight: bold; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle; font-size: 16px;" onclick="triggerKeyboardForDeduct(this, 'B')">0</td>
+            <td id="tail-p3-deduct" style="color: #dc2626; cursor: pointer; font-weight: bold; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle; font-size: 16px;" onclick="triggerKeyboardForDeduct(this, 'C')">0</td>
+            <td id="tail-p4-deduct" style="color: #dc2626; cursor: pointer; font-weight: bold; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle; font-size: 16px;" onclick="triggerKeyboardForDeduct(this, 'D')">0</td>
+          </tr>
+          
+          <!-- 2. 單桌名次列 -->
+          <tr class="bg-tail-row">
+            <td class="bg-tail-label" style="height: 44px; padding: 0; margin: 0; text-align: center; vertical-align: middle; font-weight: bold; background-color: #334155; color: #ffffff; font-size: 13px; border: 1px solid #cbd5e1; line-height: 1.2;">
+              單桌<br>名次
+            </td>
+            <td id="tail-p1-tablerank" style="text-align: center; border: 1px solid #cbd5e1; font-weight: bold; vertical-align: middle; font-size: 15px; color: #1e293b;">-</td>
+            <td id="tail-p2-tablerank" style="text-align: center; border: 1px solid #cbd5e1; font-weight: bold; vertical-align: middle; font-size: 15px; color: #1e293b;">-</td>
+            <td id="tail-p3-tablerank" style="text-align: center; border: 1px solid #cbd5e1; font-weight: bold; vertical-align: middle; font-size: 15px; color: #1e293b;">-</td>
+            <td id="tail-p4-tablerank" style="text-align: center; border: 1px solid #cbd5e1; font-weight: bold; vertical-align: middle; font-size: 15px; color: #1e293b;">-</td>
+          </tr>
+          
+          <!-- 3. 標準分數列 -->
+          <tr class="bg-tail-row" style="background-color: #fffde6;">
+            <td class="bg-tail-label" style="height: 44px; padding: 0; margin: 0; text-align: center; vertical-align: middle; font-weight: bold; background-color: #854d0e; color: #ffffff; font-size: 13px; border: 1px solid #cbd5e1; line-height: 1.2;">
+              標準<br>分數
+            </td>
+            <td id="tail-p1-stdscore" style="font-size: 18px; font-weight: 900; color: #854d0e; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle;">0</td>
+            <td id="tail-p2-stdscore" style="font-size: 18px; font-weight: 900; color: #854d0e; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle;">0</td>
+            <td id="tail-p3-stdscore" style="font-size: 18px; font-weight: 900; color: #854d0e; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle;">0</td>
+            <td id="tail-p4-stdscore" style="font-size: 18px; font-weight: 900; color: #854d0e; text-align: center; border: 1px solid #cbd5e1; vertical-align: middle;">0</td>
+          </tr>
+          
+          <!-- 4. 選手確認簽名列 -->
+          <tr class="bg-tail-row">
+            <td class="bg-tail-label" style="height: 44px; padding: 0; margin: 0; text-align: center; vertical-align: middle; font-weight: bold; background-color: #334155; color: #ffffff; font-size: 13px; border: 1px solid #cbd5e1; line-height: 1.2;">
+              選手<br>確認
+            </td>
+            <td class="td-sign-container" style="padding: 0; margin: 0; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" id="btn-sign-1" class="btn-sign-common btn-sign-a" style="width: 100%; height: 100%; background-color: #2563eb; color: white; font-weight: bold; font-size: 13px; border: none; border-radius: 0; cursor: pointer; padding: 0; margin: 0; display: block; line-height: 1.3; text-align: center;" onclick="handleSignClick(1, 'A')">東家<br>確認</button>
+            </td>
+            <td class="td-sign-container" style="padding: 0; margin: 0; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" id="btn-sign-2" class="btn-sign-common btn-sign-b" style="width: 100%; height: 100%; background-color: #16a34a; color: white; font-weight: bold; font-size: 13px; border: none; border-radius: 0; cursor: pointer; padding: 0; margin: 0; display: block; line-height: 1.3; text-align: center;" onclick="handleSignClick(2, 'B')">南家<br>確認</button>
+            </td>
+            <td class="td-sign-container" style="padding: 0; margin: 0; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" id="btn-sign-3" class="btn-sign-common btn-sign-c" style="width: 100%; height: 100%; background-color: #eab308; color: #000000; font-weight: bold; font-size: 13px; border: none; border-radius: 0; cursor: pointer; padding: 0; margin: 0; display: block; line-height: 1.3; text-align: center;" onclick="handleSignClick(3, 'C')">西家<br>確認</button>
+            </td>
+            <td class="td-sign-container" style="padding: 0; margin: 0; height: 44px; border: 1px solid #cbd5e1;">
+              <button type="button" id="btn-sign-4" class="btn-sign-common btn-sign-d" style="width: 100%; height: 100%; background-color: #dc2626; color: white; font-weight: bold; font-size: 13px; border: none; border-radius: 0; cursor: pointer; padding: 0; margin: 0; display: block; line-height: 1.3; text-align: center;" onclick="handleSignClick(4, 'D')">北家<br>確認</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div> <!-- 結束 table-scroll-wrapper -->
+  </div> <!-- 結束 main-container -->
+  <!-- ========================================================= -->
+  <!-- 第 10 部分：賽事初始化設定與大會最高策略宣示彈窗 HTML         -->
+  <!-- 說明：納入年份規格，全面取消特殊圖案，維持剛性扁平排版     -->
+  <!-- ========================================================= -->
+  
+  <!-- 1. 賽事初始化設定彈窗 -->
+  <div id="modal-setup" class="custom-modal-overlay" style="display: none;">
+    <div class="modal-content-box" style="border: 3px solid #1e3a8a; border-radius: 0;">
+      <div class="modal-header" style="background-color: #1e3a8a; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 16px;">
+        賽事初始化設定
+      </div>
+      <div class="modal-body-scroll">
+        <div class="modal-meta-group" style="border-radius: 0;">
+          <div class="meta-item">
+            <label for="setup-round-input" style="font-size: 13px;">變更局次</label>
+            <input type="number" id="setup-round-input" class="input-meta-field" min="1" max="16" value="1" style="border-radius: 0; height: 38px;">
+          </div>
+          <div class="meta-item">
+            <label for="setup-date-input" style="font-size: 13px;">變更日期</label>
+            <input type="text" id="setup-date-input" class="input-meta-field" value="2026/06/06" placeholder="YYYY/MM/DD" style="border-radius: 0; height: 38px;">
+          </div>
+        </div>
+        
+        <!-- 東南西北四家座位卡片排版 -->
+        <div class="seat-setup-group">
+          <!-- 東家卡片 -->
+          <div class="seat-card" style="border-radius: 0; padding: 10px;">
+            <div class="seat-label east" style="font-size: 14px;">東家 (A)</div>
+            <input type="text" id="setup-p1-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(1)">
+            <input type="text" id="setup-p1-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
+          </div>
+          <!-- 南家卡片 -->
+          <div class="seat-card" style="border-radius: 0; padding: 10px;">
+            <div class="seat-label south" style="font-size: 14px;">南家 (B)</div>
+            <input type="text" id="setup-p2-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(2)">
+            <input type="text" id="setup-p2-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
+          </div>
+          <!-- 西家卡片 -->
+          <div class="seat-card" style="border-radius: 0; padding: 10px;">
+            <div class="seat-label west" style="font-size: 14px;">西家 (C)</div>
+            <input type="text" id="setup-p3-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(3)">
+            <input type="text" id="setup-p3-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
+          </div>
+          <!-- 北家卡片 -->
+          <div class="seat-card" style="border-radius: 0; padding: 10px;">
+            <div class="seat-label north" style="font-size: 14px;">北家 (D)</div>
+            <input type="text" id="setup-p4-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(4)">
+            <input type="text" id="setup-p4-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
+          </div>
+        </div>
+      </div>
+      
+      <!-- 初始化彈窗底部控制鈕 -->
+      <div style="display: flex; gap: 0; padding: 0; background-color: #f1f5f9; box-sizing: border-box;">
+        <button type="button" style="flex: 1; height: 48px; background-color: #64748b; color: white; border: none; border-radius: 0; font-weight: bold; font-size: 14px; cursor: pointer;" onclick="closeSetupModal()">
+          取消
+        </button>
+        <button type="button" style="flex: 1; height: 48px; background-color: #16a34a; color: white; border: none; border-radius: 0; font-weight: bold; font-size: 14px; cursor: pointer;" onclick="applyAndBuildRound()">
+          套用並建立本局
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 大會最高策略宣示看板彈窗 -->
+  <div id="modal-strategy" class="custom-modal-overlay" style="display: none;">
+    <div class="modal-content-box" style="max-width: 295px; border: 3px solid #ea580c; border-radius: 0;">
+      <div class="modal-header" style="background-color: #ea580c; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 16px;">
+        幸福盃賽事對局最高策略
+      </div>
+      <div class="modal-body-scroll" style="background-color: #1e293b; color: #f8fafc; font-size: 13px; line-height: 1.6; padding: 14px;">
+        <div style="text-align: center; color: #fbbf24; font-weight: 900; font-size: 15px; margin-bottom: 8px; border-bottom: 1px dashed #4b5563; padding-bottom: 6px;">
+          國標麻將核心追求目標
+        </div>
+        <p style="margin-bottom: 8px;"><strong style="color: #38bdf8;">1. 起胡門檻：</strong>必須嚴格滿足 8 番（不含花牌）之基本起胡限制，未滿 8 番一律不予計分。</p>
+        <p style="margin-bottom: 8px;"><strong style="color: #38bdf8;">2. 算分制衡：</strong>自摸者獨得三家之大分，點炮者承擔極大失分。選手應因應盤勢靈活切換高番進攻與硬派防守策略。</p>
+        <p style="margin-bottom: 8px;"><strong style="color: #38bdf8;">3. 爭奪第一：</strong>大表實時聯動黃色冠軍底色樣式。選手應緊盯目前第一名之分差，精算標準分配發，極速調整局序策略！</p>
+        <div style="background-color: #0f172a; padding: 8px; border-radius: 0; text-align: center; margin-top: 10px; border: 1px solid #334155; font-weight: bold; color: #4ade80;">
+          穩紮穩打・算無遺策・共創榮耀
+        </div>
+      </div>
+      <div style="padding: 0; background-color: #0f172a; text-align: center;">
+        <button type="button" class="btn-top-gold" style="background-color: #ea580c; height: 48px; font-size: 14px; border-radius: 0; border: none; width: 100%;" onclick="closeStrategyModal()">
+          返回控台大表
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- ========================================================= -->
+  <!-- 第 11 部分：大數字鍵盤與反轉佈局（鍵盤在上、選區在下）MCR 計分盤 HTML -->
+  <!-- 說明：取消所有特殊圖案、移除圓角、鍵盤在上、完全固定置中         -->
+  <!-- ========================================================= -->
+
+  <!-- 1. 獨立彈窗：完全體實體大數字鍵盤（專供變更桌次與扣分調整使用） -->
+  <div id="modal-keyboard" class="custom-modal-overlay" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; z-index: 99999 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+    <div class="keyboard-box" style="border-radius: 0; border: 3px solid #475569; background-color: #1e293b; margin: auto;">
+      <div id="kyboard-title" style="color: #94a3b8; font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center;">大數字鍵盤</div>
+      <div id="keyboard-display" class="keyboard-screen" style="border-radius: 0; background-color: #0f172a; color: #38bdf8; font-size: 26px; font-weight: bold; text-align: right; padding: 10px 14px; margin-bottom: 12px; min-height: 44px;">0</div>
+      
+      <div class="keyboard-grid">
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('1')">1</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('2')">2</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('3')">3</button>
+        
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('4')">4</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('5')">5</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('6')">6</button>
+        
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('7')">7</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('8')">8</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('9')">9</button>
+        
+        <button type="button" class="btn-key btn-key-action" style="border-radius: 0; background-color: #ea580c;" onclick="pressKey('+/-')">+/-</button>
+        <button type="button" class="btn-key" style="border-radius: 0;" onclick="pressKey('0')">0</button>
+        <button type="button" class="btn-key btn-key-action" style="border-radius: 0; background-color: #ea580c;" onclick="pressKey('C')">退格</button>
+      </div>
+      
+      <div class="keyboard-footer-grid" style="display: flex; gap: 8px;">
+        <button type="button" class="btn-footer-long btn-footer-back" style="border-radius: 0; flex: 1; height: 52px; font-size: 16px; font-weight: bold; color: white; background-color: #dc2626; border: none; cursor: pointer;" onclick="closeKeyboardModal()">返回大表</button>
+        <button type="button" class="btn-footer-long btn-footer-submit" style="border-radius: 0; flex: 1; height: 52px; font-size: 16px; font-weight: bold; color: white; background-color: #16a34a; border: none; cursor: pointer;" onclick="submitKeyboardValue()">確認</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 獨立彈窗：國標計分盤（完全置中、Google Sheets 式鍵盤在上選區在下佈局） -->
+  <div id="modal-round-score" class="custom-modal-overlay" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; z-index: 99999 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
+    <div class="combo-score-box" style="border-radius: 0; border: 3px solid #1e293b; background-color: #ffffff; margin: auto; max-height: 98vh; width: 315px;">
+      <!-- 頂部局次細邊抬頭 -->
+      <div class="modal-header" id="round-score-title" style="background-color: #0f172a; color: white; padding: 6px 12px; text-align: center; font-weight: bold; font-size: 14px;">1盤 - 國標計分盤</div>
+
+      <!-- 鍵盤在上：高度由 46px 剛性壓縮至 36px，大幅節省垂直空間 -->
+      <div class="combo-keyboard-grid" style="background-color: #1e293b; padding: 6px; gap: 4px;">
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('1')">1</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('2')">2</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('3')">3</button>
+        
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('4')">4</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('5')">5</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('6')">6</button>
+        
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('7')">7</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('8')">8</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('9')">9</button>
+        
+        <button type="button" class="btn-combo-key btn-combo-key-action" style="visibility: hidden; height: 36px !important;">+/-</button>
+        <button type="button" class="btn-combo-key" style="border-radius: 0; height: 36px !important; font-size: 17px;" onclick="pressComboKey('0')">0</button>
+        <button type="button" class="btn-combo-key btn-combo-key-action" style="border-radius: 0; height: 36px !important; background-color: #ea580c; font-size: 14px;" onclick="pressComboKey('C')">退格</button>
+      </div>
+      
+      <!-- 數據與選手選區在下：壓縮間距，防止高度溢出 -->
+      <div style="padding: 8px 12px; background-color: #ffffff; box-sizing: border-box;">
+        
+        <!-- 胡牌番數顯示區 -->
+        <label style="display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #1e293b;">1. 胡牌番數 (0代表荒庄)：</label>
+        <div id="score-input-fan" style="width: 100%; height: 34px; background-color: #f1f5f9; border: 2px solid #334155; border-radius: 0; line-height: 34px; text-align: center; font-size: 20px; font-weight: bold; color: #dc2626; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 6px;">0</div>
+        
+        <!-- 胡牌選手選擇區 -->
+        <label style="display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #1e293b;">2. 選擇胡牌選手：</label>
+        <div class="selector-grid-4" style="margin-bottom: 6px; gap: 4px;">
+          <button type="button" id="btn-winner-A" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectWinner('A')">1 (東)</button>
+          <button type="button" id="btn-winner-B" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectWinner('B')">2 (南)</button>
+          <button type="button" id="btn-winner-C" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectWinner('C')">3 (西)</button>
+          <button type="button" id="btn-winner-D" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectWinner('D')">4 (北)</button>
+        </div>
+        
+        <!-- 點炮選手選擇區 -->
+        <label style="display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #1e293b;">3. 選擇點炮選手 (同胡牌即自摸)：</label>
+        <div class="selector-grid-4" style="margin-bottom: 0; gap: 4px;">
+          <button type="button" id="btn-loser-A" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectLoser('A')">1 (東)</button>
+          <button type="button" id="btn-loser-B" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectLoser('B')">2 (南)</button>
+          <button type="button" id="btn-loser-C" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectLoser('C')">3 (西)</button>
+          <button type="button" id="btn-loser-D" class="btn-select-box" style="border-radius: 0; height: 34px !important; padding: 0; font-size: 13px;" onclick="selectLoser('D')">4 (北)</button>
+        </div>
+      </div>
+      
+      <!-- 底部控制按鈕 -->
+      <div class="combo-footer-horizontal" style="background-color: #1e293b; padding: 0 10px 8px 10px; gap: 8px;">
+        <button type="button" class="btn-combo-half btn-combo-back" style="border-radius: 0; height: 36px !important; background-color: #dc2626; color: white; border: none; font-weight: bold; cursor: pointer;" onclick="closeRoundScoreModal()">返回大表</button>
+        <button type="button" class="btn-combo-half btn-combo-submit" style="border-radius: 0; height: 36px !important; background-color: #16a34a; color: white; border: none; font-weight: bold; cursor: pointer;" onclick="submitRoundScoreCalc()">確認</button>
+      </div>
+    </div>
+  </div>
+  <!-- ========================================================= -->
+  <!-- 第 12 部分：全域同步遮罩、核心變量初始化與跨網域通訊網關       -->
+  <!-- 說明：全面取消特殊圖案，遮罩層改為純 CSS 旋轉環，引入 Fetch 核心 -->
+  <!-- ========================================================= -->
+
+  <!-- 全域超時防空網與歷史大同步專用不透明遮罩層 -->
+  <div id="loadingOverlay" class="custom-modal-overlay" style="display: none; background-color: rgba(15, 23, 42, 0.96); flex-direction: column; justify-content: center; align-items: center; color: #ffffff; text-align: center; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 999999;">
+    <!-- 純 CSS 剛性鋼骨旋轉環 -->
+    <div class="loader-spin-ring" style="width: 50px; height: 50px; border: 5px solid #334155; border-top: 5px solid #38bdf8; border-radius: 50%; animation: spinGlow 1s linear infinite; margin-bottom: 16px;"></div>
+    <div id="loadingText" style="font-size: 15px; font-weight: bold; letter-spacing: 1px; max-width: 290px; padding: 0 10px; line-height: 1.5;">連線對接中...</div>
+  </div>
+
+  <style>
+    @keyframes spinGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    // 說明：跨網域 API 節點配置，請將您重新部署 GAS 網頁應用程式後取得的實體網址貼在此處
+    var BACKEND_API_URL = "https://script.google.com/macros/s/AKfycby-Q3MHuU4kvPjMuYeuEDmigeVog14bGDRHIN-nTVN3sHbDSxHHYUDgnxXCnwcC8hZN/exec";
+
+    // 全域選手名單前端快取與非同步狀態鎖，徹底封印閃現與蓋寫錯誤
+    var playerDatabaseCache = {};
+    var activeQueries = {}; // 記錄各方位當前最新的非同步請求 ID
+
+    // 獨立大數字鍵盤暫存器
+    var currentKbMode = "";     
+    var currentKbTarget = null; 
+    var currentKbValue = "0";   
+
+    // 終極合體計分控台專用動態暫存器
+    var activeRound = 1;        
+    var selectedWinner = null;  
+    var selectedLoser = null;   
+    var currentFanString = "0"; 
+    var currentFanValue = 0;
+
+    /**
+     * 跨網域 POST 通訊核心發動機
+     */
+    function callBackendAPI(action, payload, successCallback, failureCallback) {
+      fetch(BACKEND_API_URL, {
+        method: "POST",
+        mode: "cors",
+        redirect: "follow",
+        body: JSON.stringify({ action: action, payload: payload })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) { successCallback(data); })
+      .catch(function(err) { failureCallback(err); });
+    }
+
+    /**
+     * 監聽選手編號輸入：V5 原子鎖機制（完全改採 Fetch 跨網域異步比對）
+     */
+    function handlePlayerNoInput(seatIndex) {
+      var noValue = document.getElementById("setup-p" + seatIndex + "-no").value.trim();
+      var nameField = document.getElementById("setup-p" + seatIndex + "-name");
+      
+      // 每次輸入變更立刻更新戳記，作廢所有先前的非同步回傳，根除閃現問題
+      var queryId = Date.now() + "_" + Math.random();
+      activeQueries[seatIndex] = queryId;
+
+      if (!noValue) {
+        nameField.value = "";
+        return;
+      }
+      
+      // 前端快取命中判定：秒出結果
+      if (playerDatabaseCache[noValue]) {
+        nameField.value = playerDatabaseCache[noValue];
+        return;
+      }
+      
+      // 正在進行全新查詢，顯示查詢中
+      nameField.value = "查詢中...";
+      
+      // 呼叫 Fetch 跨網域通訊網關
+      callBackendAPI("getPlayerName", { noValue: noValue }, function(res) {
+        // 靶向安全閥開關驗證：只有當此次回傳時的 ID 與最新戳記完全吻合，才准寫入！
+        if (activeQueries[seatIndex] !== queryId) return; 
+        
+        if (res && res.name) {
+          nameField.value = res.name;
+          playerDatabaseCache[noValue] = res.name;
+        } else {
+          nameField.value = "查無此選手";
+        }
+      }, function() {
+        if (activeQueries[seatIndex] !== queryId) return;
+        nameField.value = "連線失敗";
+      });
+    }
+    /* ========================================================= */
+    /* 第 13 部分：彈窗與鍵盤交互控制及姓名 2x2 動態格式化腳本        */
+    /* 說明：全面取消特殊圖案，內建姓名自動分流換行與日期格式化處理    */
+    /* ========================================================= */
+
+    /**
+     * 輔助函數：將選手姓名剛性轉化為上下排各兩個字的 2x2 格式
+     */
+    function formatName2x2(name) {
+      if (!name || name === "-") return "-";
+      // 如果是四個字，直接對半拆（如：司徒穎芝 轉為 司徒<br>穎芝）
+      if (name.length === 4) {
+        return name.substring(0, 2) + "<br>" + name.substring(2, 4);
+      }
+      // 如果是三個字，固定上排兩個、下排一個
+      if (name.length === 3) {
+        return name.substring(0, 2) + "<br>" + name.substring(2, 3);
+      }
+      // 其餘長度依中位數剛性對拆折行
+      if (name.length > 4) {
+        var mid = Math.ceil(name.length / 2);
+        return name.substring(0, mid) + "<br>" + name.substring(mid);
+      }
+      return name;
+    }
+
+    /**
+     * 賽事初始化設定彈窗控制項
+     */
+    function openSetupModal() {
+      document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
+      
+      // 還原原始完整日期格式給輸入框（如果是 026 開頭則轉回 2026 供編輯）
+      var curDateDisplay = document.getElementById("top-date-display").innerText;
+      if (curDateDisplay.startsWith("026/")) {
+        curDateDisplay = "2026" + curDateDisplay.substring(3);
+      }
+      document.getElementById("setup-date-input").value = curDateDisplay;
+      
+      for (var i = 1; i <= 4; i++) {
+        var noText = document.getElementById("main-p" + i + "-no").innerText;
+        // 還原姓名至設定框時，自動抹除換行符號以利閱讀與編輯
+        var nameText = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, "");
+        document.getElementById("setup-p" + i + "-no").value = noText === "-" ? "" : noText;
+        document.getElementById("setup-p" + i + "-name").value = nameText === "-" ? "" : nameText;
+      }
+      document.getElementById("modal-setup").style.display = "flex";
+    }
+    
+    function closeSetupModal() { 
+      document.getElementById("modal-setup").style.display = "none"; 
+    }
+
+    /**
+     * 對局策略宣示看板彈窗控制項
+     */
+    function openStrategyModal() { 
+      document.getElementById("modal-strategy").style.display = "flex"; 
+    }
+    
+    function closeStrategyModal() { 
+      document.getElementById("modal-strategy").style.display = "none"; 
+    }
+
+    /**
+     * 各項功能彈窗與大數字鍵盤開關控制項
+     */
+    function openKeyboardModal(titleText, startValue) {
+      document.getElementById("kyboard-title").innerText = titleText;
+      currentKbValue = (startValue === "-" || startValue === "0") ? "" : String(startValue);
+      document.getElementById("keyboard-display").innerText = currentKbValue === "" ? "0" : currentKbValue;
+      document.getElementById("modal-keyboard").style.display = "flex";
+    }
+
+    function closeKeyboardModal() { 
+      document.getElementById("modal-keyboard").style.display = "none"; 
+    }
+
+    function openRoundScoreModal(round) {
+      activeRound = round;
+      document.getElementById("round-score-title").innerText = round + "盤 - 國標計分盤";
+      currentFanString = "0";
+      currentFanValue = 0;
+      document.getElementById("score-input-fan").innerText = "0";
+      selectedWinner = null;
+      selectedLoser = null;
+      resetSelectorButtons();
+      document.getElementById("modal-round-score").style.display = "flex";
+    }
+    
+    function closeRoundScoreModal() { 
+      document.getElementById("modal-round-score").style.display = "none"; 
+    }
+
+    function triggerKeyboardForDeduct(cell, seat) {
+      currentKbMode = "DEDUCT";
+      currentKbTarget = cell;
+      openKeyboardModal(seat + "家 - 扣分調整輸入", cell.innerText);
+    }
+
+    function triggerKeyboardForTable() {
+      currentKbMode = "TABLE";
+      currentKbTarget = document.getElementById("top-table-display");
+      var curText = currentKbTarget.innerText.replace(/[^0-9]/g, "") || "1";
+      openKeyboardModal("變更控台桌次 (支援1~60桌)", curText);
+    }
+
+    /**
+     * 終極合體箱番數鍵盤點擊交互
+     */
+    function pressComboKey(key) {
+      var fanDisplay = document.getElementById("score-input-fan");
+      if (!fanDisplay) return;
+
+      if (key === 'C') {
+        if (currentFanString.length > 0) currentFanString = currentFanString.substring(0, currentFanString.length - 1);
+      } else {
+        if (currentFanString.length < 3) {
+          if (currentFanString === "0") currentFanString = "";
+          currentFanString += key;
+        }
+      }
+
+      var finalFan = currentFanString === "" ? "0" : currentFanString;
+      currentFanValue = parseInt(finalFan) || 0;
+      fanDisplay.innerText = finalFan;
+
+      if (currentFanValue === 0) {
+        selectedWinner = null;
+        selectedLoser = null;
+        resetSelectorButtons();
+      }
+    }
+
+    /**
+     * 套用並建立本局
+     */
+    function applyAndBuildRound() {
+      var setupRound = document.getElementById("setup-round-input").value || "1";
+      var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
+      
+      // 若輸入為 2026/06/06 格式，自動縮減顯示成 026/06/06
+      var displayDate = setupDate;
+      if (displayDate.length === 10 && displayDate.startsWith("2")) {
+        displayDate = "0" + displayDate.substring(1);
+      }
+      
+      // 寫入頂部狀態欄
+      document.getElementById("top-round-display").innerText = setupRound;
+      document.getElementById("top-date-display").innerText = displayDate;
+      
+      // 將設定資料實體搬移至大表欄位
+      for (var i = 1; i <= 4; i++) {
+        var noVal = document.getElementById("setup-p" + i + "-no").value.trim();
+        var nameVal = document.getElementById("setup-p" + i + "-name").value.trim() || "-";
+        
+        document.getElementById("main-p" + i + "-no").innerText = (noVal === "" || noVal === "(自動姓名)") ? "-" : noVal;
+        
+        // 智慧型姓名對半拆折行處理
+        document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(nameVal);
+      }
+      
+      // 強制重設全盤分數為未記分狀態，確保數據純淨
+      for (var r = 1; r <= 16; r++) {
+        ['A','B','C','D'].forEach(function(seat) {
+          document.getElementById("score-" + r + "-" + seat).innerText = "-";
+        });
+      }
+      
+      // 重計總分、更新排名、執行落地快取備份
+      calculateTotals();
+      saveTableToLocalStorage();
+      
+      // 隱藏彈窗
+      closeSetupModal();
+    }
+    /* ========================================================= */
+    /* 第 14 部分：勝負手選擇器、國標核心計分與大腦精算腳本           */
+    /* 說明：全面取消特殊圖案，徹底修復並補齊標準分數共享權重陣列     */
+    /* ========================================================= */
+
+    function selectWinner(seat) {
+      selectedWinner = seat;
+      ['A','B','C','D'].forEach(function(s) {
+        var btn = document.getElementById("btn-winner-" + s);
+        if(btn) btn.className = "btn-select-box";
+      });
+      var targetBtn = document.getElementById("btn-winner-" + seat);
+      if(targetBtn) {
+        targetBtn.classList.add("active-" + seat.toLowerCase());
+        targetBtn.style.borderRadius = "0";
+      }
+    }
+
+    function selectLoser(seat) {
+      selectedLoser = seat;
+      ['A','B','C','D'].forEach(function(s) {
+        var btn = document.getElementById("btn-loser-" + s);
+        if(btn) btn.className = "btn-select-box";
+      });
+      var targetBtn = document.getElementById("btn-loser-" + seat);
+      if(targetBtn) {
+        targetBtn.classList.add("active-" + seat.toLowerCase());
+        targetBtn.style.borderRadius = "0";
+      }
+    }
+
+    function resetSelectorButtons() {
+      ['A','B','C','D'].forEach(function(s) {
+        var wBtn = document.getElementById("btn-winner-" + s);
+        var lBtn = document.getElementById("btn-loser-" + s);
+        if(wBtn) wBtn.className = "btn-select-box";
+        if(lBtn) lBtn.className = "btn-select-box";
+      });
+    }
+
+    /**
+     * 合體計分盤算分核心：完全對齊荒庄與自摸規則
+     */
+    function submitRoundScoreCalc() {
+      var fan = parseInt(currentFanString) || 0;
+      
+      // 1. 荒庄判定：番數為 0 代表荒庄
+      if (fan === 0) {
+        ['A','B','C','D'].forEach(function(seat) {
+          var cell = document.getElementById("score-" + activeRound + "-" + seat);
+          if (cell) cell.innerText = "0";
+        });
+        calculateTotals();
+        saveTableToLocalStorage();
+        closeRoundScoreModal();
+        return;
+      }
+      
+      // 2. 防呆驗證
+      if (!selectedWinner || !selectedLoser) {
+        alert("最高提示：請選定胡牌選手與點炮選手方位！若為自摸，兩者請選擇相同方位");
+        return;
+      }
+      
+      var seats = ['A', 'B', 'C', 'D'];
+      var roundScores = { A: 0, B: 0, C: 0, D: 0 };
+
+      // 3. 國標麻將算分規則核心公式
+      if (selectedWinner === selectedLoser) {
+        // 自摸公式：其餘三家各輸 (8 + 番數) 分，胡牌家獨得總和
+        var losePoints = -(8 + fan);
+        var winPoints = (8 + fan) * 3;
+        seats.forEach(function(seat) {
+          roundScores[seat] = (seat === selectedWinner) ? winPoints : losePoints;
+        });
+      } else {
+        // 點炮公式：點炮家輸 (8 + 番數) 分，其餘兩家各輸 8 分，胡牌家獨得總和
+        var loserLosePoints = -(8 + fan);
+        var commonLosePoints = -8;
+        var winPoints = (8 + fan) + 8 + 8; 
+        seats.forEach(function(seat) {
+          if (seat === selectedWinner) roundScores[seat] = winPoints;
+          else if (seat === selectedLoser) roundScores[seat] = loserLosePoints;
+          else roundScores[seat] = commonLosePoints;
+        });
+      }
+      
+      // 4. 數據回收寫回大表對應唯讀儲存格
+      seats.forEach(function(seat) {
+        var cell = document.getElementById("score-" + activeRound + "-" + seat);
+        if (cell) {
+          var scoreVal = roundScores[seat];
+          cell.innerText = scoreVal > 0 ? "+" + scoreVal : scoreVal;
+        }
+      });
+      
+      calculateTotals();
+      saveTableToLocalStorage();
+      closeRoundScoreModal();
+    }
+
+    /**
+     * 終極大腦：全自動累計、紅藍配色、標準分共享與黃底冠軍高亮引擎
+     */
+    function calculateTotals() {
+      var seats = ['A', 'B', 'C', 'D'];
+      var scoreTotals = { A: 0, B: 0, C: 0, D: 0 };
+
+      // 1. 加總 1~16 盤分數，並執行自動紅藍配色視覺管理
+      for (var r = 1; r <= 16; r++) {
+        seats.forEach(function(seat) {
+          var cell = document.getElementById("score-" + r + "-" + seat);
+          if (cell) {
+            var val = parseFloat(cell.innerText);
+            if (!isNaN(val)) {
+              scoreTotals[seat] += val;
+              if (val > 0) { cell.style.color = "#dc2626"; }
+              else if (val < 0) { cell.style.color = "#2563eb"; }
+              else { cell.style.color = "#64748b"; }
+            } else {
+              cell.style.color = "#64748b";
+            }
+          }
+        });
+      }
+
+      // 2. 扣除扣分調整，算出累計總得分，並渲染總分紅藍色
+      var playersResult = [];
+      var maxScore = -99999;
+
+      seats.forEach(function(seat, idx) {
+        var deductCell = document.getElementById("tail-p" + (idx + 1) + "-deduct");
+        var deductVal = deductCell ? (parseFloat(deductCell.innerText) || 0) : 0;
+        
+        var totalScore = scoreTotals[seat] - deductVal;
+        var totalDisplay = document.getElementById("main-p" + (idx + 1) + "-total");
+        if (totalDisplay) {
+          totalDisplay.innerText = totalScore;
+          if (totalScore > 0) { totalDisplay.style.color = "#dc2626"; }
+          else if (totalScore < 0) { totalDisplay.style.color = "#2563eb"; }
+          else { totalDisplay.style.color = "#1e293b"; }
+          
+          totalDisplay.classList.remove("champion-gold-glow");
+        }
+        
+        var idCell = document.getElementById("main-p" + (idx + 1) + "-no").innerText;
+        if (idCell !== "-" && idCell !== "") {
+          if (totalScore > maxScore) { maxScore = totalScore; }
+        }
+        
+        playersResult.push({ seatIndex: idx + 1, seat: seat, score: totalScore });
+      });
+
+      // 3. 動態配發標準分與大賽級名次平分邏輯
+      var sorted = [];
+      playersResult.forEach(function(item) { sorted.push(item); });
+      sorted.sort(function(a, b) { return b.score - a.score; });
+      
+      // 💡 剛性重塑大賽標準分共享陣列，徹底補齊數值破除白畫面死鎖
+      var baseStdScores = [4, 2, 1, 0]; 
+
+      playersResult.forEach(function(p) {
+        var group = playersResult.filter(function(x) { return x.score === p.score; });
+        var startIndex = sorted.findIndex(function(x) { return x.score === p.score; });
+        
+        var sumStd = 0;
+        for (var i = 0; i < group.length; i++) {
+          var poolIndex = startIndex + i;
+          sumStd += (poolIndex < baseStdScores.length) ? baseStdScores[poolIndex] : 0;
+        }
+        
+        var finalStd = sumStd / group.length;
+        var rankNum = startIndex + 1;
+        var cnRanks = { 1: "一", 2: "二", 3: "三", 4: "四" };
+        var cnRankStr = cnRanks[rankNum] || "四";
+
+        var rankCell = document.getElementById("tail-p" + p.seatIndex + "-tablerank");
+        var stdCell = document.getElementById("tail-p" + p.seatIndex + "-stdscore");
+        var topRankCell = document.getElementById("main-p" + p.seatIndex + "-rank");
+        var totalDisplay = document.getElementById("main-p" + p.seatIndex + "-total");
+        
+        if (rankCell) rankCell.innerText = cnRankStr;
+        if (stdCell) {
+          stdCell.innerText = finalStd;
+          stdCell.style.color = "#dc2626"; 
+        }
+        if (topRankCell) {
+          topRankCell.innerText = rankNum + "名";
+          topRankCell.classList.remove("champion-gold-glow"); 
+          
+          var currentId = document.getElementById("main-p" + p.seatIndex + "-no").innerText;
+          if (p.score === maxScore && maxScore !== -99999 && currentId !== "-" && currentId !== "") {
+            topRankCell.classList.add("champion-gold-glow");
+            if (totalDisplay) totalDisplay.classList.add("champion-gold-glow");
+          }
+        }
+      });
+    }
+    /* ========================================================= */
+    /* 第 15 部分：大數字鍵盤輸入、寫回與選手確認簽名腳本            */
+    /* 說明：全面取消特殊圖案，簽名鎖定後文字剛性維持上下各兩字       */
+    /* ========================================================= */
+
+    /**
+     * 獨立大數字鍵盤按鍵字串編寫（專供變更桌次與扣分調整使用）
+     */
+    function pressKey(key) {
+      if (key === 'C') {
+        if (currentKbValue.length > 0) {
+          currentKbValue = currentKbValue.substring(0, currentKbValue.length - 1);
+        }
+      } else if (key === '+/-') {
+        if (currentKbValue !== "" && currentKbValue !== "0") {
+          currentKbValue = currentKbValue.startsWith("-") ? currentKbValue.substring(1) : "-" + currentKbValue;
+        } else if (currentKbValue === "" || currentKbValue === "0") {
+          currentKbValue = "-";
+        }
+      } else {
+        if (currentKbValue.length < 5) {
+          if (currentKbValue === "0" || currentKbValue === "-0") {
+            currentKbValue = currentKbValue.startsWith("-") ? "-" + key : key;
+          } else {
+            currentKbValue += key;
+          }
+        }
+      }
+      document.getElementById("keyboard-display").innerText = (currentKbValue === "" || currentKbValue === "-") ? (currentKbValue === "-" ? "-" : "0") : currentKbValue;
+    }
+
+    /**
+     * 大數字鍵盤值確認寫回大表
+     */
+    function submitKeyboardValue() {
+      let finalVal = currentKbValue === "" ? "0" : currentKbValue;
+      if (finalVal === "-") finalVal = "0";
+      
+      if (currentKbMode === "DEDUCT") {
+        if (currentKbTarget) {
+          currentKbTarget.innerText = parseInt(finalVal) || 0;
+        }
+        calculateTotals();
+        saveTableToLocalStorage();
+      } else if (currentKbMode === "TABLE") {
+        let tableNum = parseInt(finalVal) || 1;
+        if (tableNum < 1) tableNum = 1;
+        if (tableNum > 60) tableNum = 60; 
+        
+        if (currentKbTarget) {
+          currentKbTarget.innerText = "第 " + tableNum + " 桌";
+        }
+        saveTableToLocalStorage();
+      }
+      closeKeyboardModal();
+    }
+
+    /**
+     * 選手確認簽名一鍵變灰鎖定
+     * 💡 說明：簽名確認後，文字依然透過換行剛性限制為上下各兩個字
+     */
+    function handleSignClick(btnIndex, seat) {
+      const btn = document.getElementById("btn-sign-" + btnIndex);
+      if (!btn) return;
+      
+      const seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
+      const curSeatName = seatNames[seat] || '選手';
+      
+      // 剛性鎖定 2x2 排版，防止格子高度產生任何破版抽動
+      btn.innerHTML = curSeatName + "<br>已確";
+      btn.disabled = true; 
+      
+      // 注入標準深灰剛性鎖定樣式，維持扁平外觀
+      btn.style.backgroundColor = "#64748b";
+      btn.style.color = "#cbd5e1";
+      
+      saveTableToLocalStorage(); 
+    }
+    /* ========================================================= */
+    /* 第 16 部分：跨網域保存上傳、歷史紀錄同步與資料包還原引擎       */
+    /* 💡 說明：完全切換為 Fetch API，取消特殊圖案，維持高相容性語法   */
+    /* ========================================================= */
+
+    /**
+     * 打包並跨網域異步上傳本局成績
+     */
+    function saveAndLockCurrentRound() {
+      var tableText = document.getElementById("top-table-display").innerText;
+      var roundNum = document.getElementById("top-round-display").innerText;
+      var dateStr = document.getElementById("top-date-display").innerText;
+      
+      showLoadingOverlay("正在將 [" + tableText + " 第 " + roundNum + " 局] 成績實體打包遞交至後端試算表...");
+
+      var seatsData = [];
+      for (var i = 1; i <= 4; i++) {
+        // 💡 讀取姓名時，自動移除換行標籤還原純文字發送給後端資料庫
+        var rawName = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, "");
+        seatsData.push({
+          no: document.getElementById("main-p" + i + "-no").innerText,
+          name: rawName,
+          total: document.getElementById("main-p" + i + "-total").innerText,
+          rank: document.getElementById("main-p" + i + "-rank").innerText,
+          std: document.getElementById("tail-p" + i + "-stdscore").innerText
+        });
+      }
+
+      var postData = {
+        table: tableText.replace(/[^0-9]/g, "") || "1",
+        round: roundNum,
+        date: dateStr,
+        players: seatsData
+      };
+
+      // 呼叫跨網域 Fetch API 引擎
+      callBackendAPI("archiveData", { data: postData }, function(res) {
+        hideLoadingOverlay();
+        if (res && res.success) {
+          alert("保存成功！[" + tableText + "] 的數據已永久寫入 History_Matrix 與 成績總表。");
+        } else {
+          alert("保存失敗：後端資料庫拒絕寫入！");
+        }
+      }, function() {
+        hideLoadingOverlay();
+        alert("保存失敗：遠端遠端未響應或網路超時！");
+      });
+    }
+
+    /**
+     * 跨網域歷史紀錄調取監聽器
+     */
+    function triggerLoadHistory() {
+      var tableText = document.getElementById("top-table-display").innerText;
+      var curTableNum = tableText.replace(/[^0-9]/g, "") || "1";
+      
+      var targetRound = prompt("請輸入您想調取第 " + curTableNum + " 桌的哪一局歷史紀錄？\n(系統將同步調取該對局在 History_Matrix 內的四家實體 1~16 盤戰況)");
+      if (!targetRound) return;
+
+      showLoadingOverlay("正在從 History_Matrix 矩陣同步目前所有桌次的最新戰況與成績總表...\n[當前載入進度：第 " + curTableNum + " 桌 第 " + targetRound + " 局]");
+
+      // 呼叫跨網域 Fetch API 引擎
+      callBackendAPI("getHistory", { tableNum: curTableNum, targetRound: targetRound }, function(res) {
+        hideLoadingOverlay();
+        if (res && res.record) {
+          restoreTableFromHistoryPayload(res.record);
+        } else {
+          alert("同步失敗：History_Matrix 矩陣中查無第 " + curTableNum + " 桌第 " + targetRound + " 局的任何實體成績！");
+        }
+      }, function() {
+        hideLoadingOverlay();
+        alert("同步失敗：後端未響應或連線中斷。");
+      });
+    }
+
+    /**
+     * 歷史紀錄資料包反向渲染還原引擎
+     */
+    function restoreTableFromHistoryPayload(data) {
+      document.getElementById("top-table-display").innerText = "第 " + data.tableNum + " 桌";
+      document.getElementById("top-round-display").innerText = data.gameRound;
+      
+      // 💡 日期相容：若後端回傳 10 碼完整年份，自動在前端壓縮為 6 碼，騰出顯示空間
+      var displayDate = data.date;
+      if (displayDate.length === 10 && displayDate.startsWith("2")) {
+        displayDate = "0" + displayDate.substring(1);
+      }
+      document.getElementById("top-date-display").innerText = displayDate;
+
+      var seats = ['A', 'B', 'C', 'D'];
+      var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
+
+      for (var i = 1; i <= 4; i++) {
+        var seatKey = seats[i-1];
+        var pData = data.players[seatKey];
+        
+        document.getElementById("main-p" + i + "-no").innerText = pData.no;
+        // 💡 還原姓名時再次呼叫 2x2 智慧換行引擎，鎖定上下各兩字
+        document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(pData.name);
+        document.getElementById("tail-p" + i + "-deduct").innerText = pData.deduct;
+        
+        for (var r = 1; r <= 16; r++) {
+          var cell = document.getElementById("score-" + r + "-" + seatKey);
+          if (cell) cell.innerText = pData.rounds[r-1] || "-";
+        }
+
+        // 還原簽名按鈕鎖定狀態與剛性 2x2 文字排版
+        var btn = document.getElementById("btn-sign-" + i);
+        if (btn) {
+          var curSeatName = seatNames[seatKey];
+          if (pData.isSigned === "Y") {
+            btn.innerHTML = curSeatName + "<br>已確";
+            btn.disabled = true;
+            btn.style.backgroundColor = "#64748b";
+            btn.style.color = "#cbd5e1";
+          } else {
+            btn.innerHTML = curSeatName + "<br>確認";
+            btn.disabled = false;
+            
+            if (seatKey === 'A') btn.style.backgroundColor = "#2563eb";
+            else if (seatKey === 'B') btn.style.backgroundColor = "#16a34a";
+            else if (seatKey === 'C') { btn.style.backgroundColor = "#eab308"; btn.style.color = "#000000"; }
+            else if (seatKey === 'D') btn.style.backgroundColor = "#dc2626";
+            if (seatKey !== 'C') btn.style.color = "#ffffff";
+          }
+        }
+      }
+      calculateTotals();
+    }
+    /* ========================================================= */
+    /* 第 17 部分：斷線自動重連記憶記憶體、重置與生命週期收官腳本       */
+    /* 💡 說明：解決截圖跳出數據蒸發痛點，全自動秒級還原歷史戰況        */
+    /* ========================================================= */
+
+    /**
+     * 實時落地寫入 LocalStorage 快取永固層（採分桌獨立金鑰隔離）
+     */
+    function saveTableToLocalStorage() {
+      var tableNum = document.getElementById("top-table-display").innerText.replace(/[^0-9]/g, "") || "1";
+      var seats = ['A', 'B', 'C', 'D'];
+      
+      // 💡 核心防禦：牢牢記住目前操作的活躍桌號，防止記分員截圖跳出回來後大表變回第1桌
+      localStorage.setItem("xf_cup_active_table_num", tableNum);
+      
+      var payload = {
+        tableNum: tableNum,
+        gameRound: document.getElementById("top-round-display").innerText,
+        // 防禦機制：若設定框不存在則預設帶入大賽日
+        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value : "2026/06/06",
+        players: {}
+      };
+
+      for (var i = 1; i <= 4; i++) {
+        var seatKey = seats[i-1];
+        var roundScores = [];
+        for (var r = 1; r <= 16; r++) {
+          var cell = document.getElementById("score-" + r + "-" + seatKey);
+          roundScores.push(cell ? cell.innerText : "-");
+        }
+        
+        var btn = document.getElementById("btn-sign-" + i);
+        payload.players[seatKey] = {
+          no: document.getElementById("main-p" + i + "-no").innerText,
+          name: document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, ""),
+          deduct: document.getElementById("tail-p" + i + "-deduct").innerText,
+          isSigned: (btn && btn.disabled) ? "Y" : "N",
+          rounds: roundScores
+        };
+      }
+      localStorage.setItem("xf_cup_scoreboard_table_" + tableNum, JSON.stringify(payload));
+    }
+
+    /**
+     * 快取讀取防禦層
+     */
+    function loadTableFromLocalStorage() {
+      var tableNum = document.getElementById("top-table-display").innerText.replace(/[^0-9]/g, "") || "1";
+      var cached = localStorage.getItem("xf_cup_scoreboard_table_" + tableNum);
+      if (!cached) return false;
+      try {
+        var data = JSON.parse(cached);
+        restoreTableFromHistoryPayload(data);
+        return true;
+      } catch (e) {
+        console.error("還原分桌落地快取失敗", e);
+        return false;
+      }
+    }
+
+    /**
+     * 物理重置功能：清空大表所有對局資料與當前桌次本地快取永固層
+     */
+    function confirmClearCurrentRound() {
+      var tableText = document.getElementById("top-table-display").innerText;
+      var tableNum = tableText.replace(/[^0-9]/g, "") || "1";
+
+      if (confirm("最高警告：確定要完全重置清空 [" + tableText + "] 的所有選手、1~16盤分數與統計資料嗎？\n此動作將一併永久抹除該桌的斷線本地快取！")) {
+        
+        localStorage.removeItem("xf_cup_scoreboard_table_" + tableNum); 
+        
+        document.getElementById("top-round-display").innerText = "1";
+        document.getElementById("top-table-display").innerText = "第 " + tableNum + " 桌";
+        
+        var seatNames = { 1: '東家', 2: '南家', 3: '西家', 4: '北家' };
+        
+        for (var i = 1; i <= 4; i++) {
+          document.getElementById("main-p" + i + "-no").innerText = "-";
+          document.getElementById("main-p" + i + "-name").innerHTML = "-";
+          document.getElementById("main-p" + i + "-total").innerText = "0";
+          document.getElementById("main-p" + i + "-rank").innerText = "-";
+          document.getElementById("tail-p" + i + "-deduct").innerText = "0";
+          document.getElementById("tail-p" + i + "-tablerank").innerText = "-";
+          document.getElementById("tail-p" + i + "-stdscore").innerText = "0";
+          
+          document.getElementById("main-p" + i + "-total").classList.remove("champion-gold-glow");
+          document.getElementById("main-p" + i + "-rank").classList.remove("champion-gold-glow");
+          
+          // 恢復剛性 2x2 初始確認簽名排版（上下排各兩個字），絕不擠壓高度
+          var btn = document.getElementById("btn-sign-" + i);
+          if (btn) {
+            btn.innerHTML = seatNames[i] + "<br>確認";
+            btn.disabled = false; 
+            
+            // 復原初始色塊外觀
+            if (i === 1) btn.style.backgroundColor = "#2563eb";
+            else if (i === 2) btn.style.backgroundColor = "#16a34a";
+            else if (i === 3) { btn.style.backgroundColor = "#eab308"; btn.style.color = "#000000"; }
+            else if (i === 4) btn.style.backgroundColor = "#dc2626";
+            if (i !== 3) btn.style.color = "#ffffff";
+          }
+        }
+        
+        for (var r = 1; r <= 16; r++) {
+          ['A','B','C','D'].forEach(function(seat) {
+            var cell = document.getElementById("score-" + r + "-" + seat);
+            if (cell) cell.innerText = "-";
+          });
+        }
+        calculateTotals();
+      }
+    }
+
+    /**
+     * 雲端遮罩層控制項
+     */
+    function showLoadingOverlay(msg) {
+      document.getElementById("loadingText").innerText = msg;
+      document.getElementById("loadingOverlay").style.display = "flex";
+    }
+    
+    function hideLoadingOverlay() {
+      document.getElementById("loadingOverlay").style.display = "none";
+    }
+
+    /**
+     * 行動端適配：動態修正 Safari/Chrome 視窗工具列造成的 vh 溢出高度計算
+     */
+    function adjustMobileVh() {
+      var vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', vh + "px");
+      var mainContainer = document.getElementById("main-container");
+      if (mainContainer) mainContainer.style.height = "calc(var(--vh, 1vh) * 100)";
+    }
+
+    // ========================================================= 
+    // 全域初始化監聽與自動加載安全防線啟動 
+    // ========================================================= 
+    window.addEventListener("DOMContentLoaded", function() {
+      adjustMobileVh();
+      closeSetupModal();
+      closeKeyboardModal();
+      closeRoundScoreModal();
+      
+      // 💡 記憶機制激活：當裁判截圖外發群組，重新點選網址連線回來時，優先自動調取先前操作的活躍桌號
+      var activeTable = localStorage.getItem("xf_cup_active_table_num") || "1";
+      document.getElementById("top-table-display").innerText = "第 " + activeTable + " 桌";
+      
+      // 依據活躍桌號秒級調用落地快取，斷線重連大表資料完美還原，永不丟失！
+      var restored = loadTableFromLocalStorage();
+      if (!restored) {
+        calculateTotals(); 
+      }
+      console.log("國標麻將幸福盃控台 - V5 終極完全體決戰修復版滿血落成");
+    });
+    window.addEventListener("resize", adjustMobileVh);
+  </script>
+</body>
+</html>
