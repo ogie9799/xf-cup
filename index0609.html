@@ -101,49 +101,40 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       user-select: none;
     }
-    /* ========================================================= */
-    /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤外殼 CSS             */
-    /* ========================================================= */
-    .sticky-header-row th, .sticky-header-row td {
-      position: sticky;
-      background-color: #ffffff;
-      z-index: 10;
-      box-shadow: inset 0 -1px 0 #cbd5e1;
+    .keyboard-screen {
+      background-color: #0f172a;
+      color: #38bdf8;
+      font-size: 26px;
+      font-weight: bold;
+      text-align: right;
+      padding: 10px 14px;
+      border-radius: 0;
+      margin-bottom: 12px;
+      min-height: 44px;
+      box-sizing: border-box;
     }
     
-    /* 剛性層級高度校正 */
-    .sticky-row-1 th,  .sticky-row-1 td  { top: 0; z-index: 15; }
-    .sticky-row-1b th, .sticky-row-1b td { top: 42px; z-index: 14; }
-    .sticky-row-2 th,  .sticky-row-2 td  { top: 86px; }
-    .sticky-row-3 th,  .sticky-row-3 td  { top: 130px; }
-    .sticky-row-4 th,  .sticky-row-4 td  { top: 162px; }
-    .sticky-row-5 th,  .sticky-row-5 td  { top: 194px; }
-    .sticky-row-6 th,  .sticky-row-6 td  { top: 232px; }
-
-    /* 遮罩層 - 彈出輸入或同步時鎖定背景 */
-    .custom-modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+    .keyboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
     }
-
-    /* 獨立大數字鍵盤排版 */
-    .keyboard-box {
-      width: 92%;
-      max-width: 310px;
-      background-color: #1e293b;
-      padding: 14px;
+    
+    .btn-key {
+      height: 66px; 
+      font-size: 22px;
+      font-weight: bold;
+      background-color: #334155;
+      color: white;
+      border: none;
       border-radius: 0;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      user-select: none;
+      -webkit-tap-highlight-color: transparent; /* 移除行動端藍色點擊高亮 */
     }
+    /* 剛性物理點擊反饋 */
+    .btn-key:active { background-color: #475569; }
+    .btn-key-action { background-color: #ea580c; }
+    .btn-key-action:active { background-color: #f97316; }
     /* ========================================================= */
     /* 第 4 部分：大數字鍵盤底部與合體計分盤外殼 CSS             */
     /* ========================================================= */
@@ -1291,3 +1282,289 @@
         }
       });
     }
+    /* ========================================================= */
+    /* 第 18-A 部分：大數字鍵盤確認、選手簽名鎖定與重設腳本        */
+    /* ========================================================= */
+
+    /**
+     * 獨立大數字鍵盤按鍵字串編寫（修補符號殘留，防止 NaN 鎖死）
+     */
+    function pressKey(key) {
+      if (key === 'C') {
+        if (currentKbValue.length > 0) {
+          currentKbValue = currentKbValue.substring(0, currentKbValue.length - 1);
+        }
+      } else if (key === '+/-') {
+        if (currentKbValue !== "" && currentKbValue !== "0" && currentKbValue !== "-") {
+          currentKbValue = currentKbValue.startsWith("-") ? currentKbValue.substring(1) : "-" + currentKbValue;
+        } else if (currentKbValue === "" || currentKbValue === "0") {
+          currentKbValue = "-";
+        }
+      } else {
+        if (currentKbValue.length < 5) {
+          if (currentKbValue === "0" || currentKbValue === "-0") {
+            currentKbValue = currentKbValue.startsWith("-") ? "-" + key : key;
+          } else {
+            currentKbValue += key;
+          }
+        }
+      }
+      
+      var displayDom = document.getElementById("keyboard-display");
+      if (displayDom) {
+        displayDom.innerText = (currentKbValue === "" || currentKbValue === "-") ? (currentKbValue === "-" ? "-" : "0") : currentKbValue;
+      }
+    }
+
+    /**
+     * 大數字鍵盤值確認寫回大表
+     */
+    function submitKeyboardValue() {
+      var finalVal = currentKbValue === "" ? "0" : currentKbValue;
+      if (finalVal === "-") finalVal = "0";
+      
+      if (currentKbMode === "DEDUCT") {
+        if (currentKbTarget) {
+          currentKbTarget.innerText = parseInt(finalVal, 10) || 0;
+        }
+        calculateTotals();
+        saveTableToLocalStorage();
+      } else if (currentKbMode === "TABLE") {
+        var tableNum = parseInt(finalVal, 10) || 1;
+        if (tableNum < 1) tableNum = 1;
+        if (tableNum > 60) tableNum = 60; 
+        
+        if (currentKbTarget) {
+          currentKbTarget.innerText = "第 " + tableNum + " 桌";
+        }
+        saveTableToLocalStorage();
+      }
+      closeKeyboardModal();
+    }
+
+    /**
+     * 選手確認簽名一鍵變灰鎖定（剛性 2x2 結構防抽動）
+     */
+    function handleSignClick(btnIndex, seat) {
+      var btn = document.getElementById("btn-sign-" + btnIndex);
+      if (!btn) return;
+      
+      var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
+      var curSeatName = seatNames[seat] || '選手';
+      
+      btn.innerHTML = curSeatName + "<br>已確";
+      btn.disabled = true; 
+      btn.style.backgroundColor = "#64748b";
+      btn.style.color = "#cbd5e1";
+      
+      saveTableToLocalStorage(); 
+    }
+
+    /**
+     * 簽名按鈕全重設解鎖函數
+     */
+    function resetAllSignButtons() {
+      var seatClasses = { 1: 'btn-sign-a', 2: 'btn-sign-b', 3: 'btn-sign-c', 4: 'btn-sign-d' };
+      var seatNames = { 1: '東家', 2: '南家', 3: '西家', 4: '北家' };
+      for (var i = 1; i <= 4; i++) {
+        var btn = document.getElementById("btn-sign-" + i);
+        if (btn) {
+          btn.disabled = false;
+          btn.style.cssText = ""; 
+          btn.className = "btn-sign-common " + seatClasses[i];
+          btn.innerHTML = seatNames[i] + "<br>確認";
+        }
+      }
+    }
+    /* ========================================================= */
+    /* 第 18-B 部分：分桌獨立隔離型 LocalStorage 落地快取與還原層    */
+    /* ========================================================= */
+
+    /**
+     * 實時落地寫入 LocalStorage 快取永固層（採分桌獨立金鑰隔離）
+     */
+    function saveTableToLocalStorage() {
+      if (isRestoringFromCache) return; // 💡 保護鎖：還原期攔截，防範死迴圈 [INDEX]
+
+      var tableDisplay = document.getElementById("top-table-display");
+      if (!tableDisplay) return;
+      
+      var tableNum = tableDisplay.innerText.replace(/[^0-9]/g, "") || "1";
+      var seats = ['A', 'B', 'C', 'D'];
+      
+      localStorage.setItem("xf_cup_active_table_num", tableNum);
+      
+      var dateInput = document.getElementById("setup-date-input");
+      var payload = {
+        tableNum: tableNum,
+        gameRound: document.getElementById("top-round-display").innerText,
+        date: dateInput ? dateInput.value : "26/06/08",
+        players: {}
+      };
+
+      for (var i = 1; i <= 4; i++) {
+        var seatKey = seats[i-1];
+        var roundScores = [];
+        
+        for (var r = 1; r <= 16; r++) {
+          var cell = document.getElementById("score-" + r + "-" + seatKey);
+          roundScores.push(cell ? cell.innerText.trim() : "-");
+        }
+        
+        var btn = document.getElementById("btn-sign-" + i);
+        var nameCell = document.getElementById("main-p" + i + "-name");
+        var rawName = nameCell ? nameCell.innerHTML.replace(/<br>/g, "").trim() : "-";
+        
+        payload.players[seatKey] = {
+          no: document.getElementById("main-p" + i + "-no").innerText.trim(),
+          name: rawName,
+          deduct: document.getElementById("tail-p" + i + "-deduct").innerText.trim(),
+          isSigned: (btn && btn.disabled) ? "Y" : "N",
+          rounds: roundScores
+        };
+      }
+      
+      localStorage.setItem("xf_cup_scoreboard_table_" + tableNum, JSON.stringify(payload));
+    }
+
+    /**
+     * 快取讀取防禦層
+     */
+    function loadTableFromLocalStorage() {
+      var tableDisplay = document.getElementById("top-table-display");
+      var tableNum = tableDisplay ? (tableDisplay.innerText.replace(/[^0-9]/g, "") || "1") : "1";
+      
+      var activeTableNum = localStorage.getItem("xf_cup_active_table_num");
+      if (activeTableNum) tableNum = activeTableNum;
+
+      var cached = localStorage.getItem("xf_cup_scoreboard_table_" + tableNum);
+      if (!cached) return false;
+      
+      try {
+        var data = JSON.parse(cached);
+        restoreTableFromHistoryPayload(data);
+        return true;
+      } catch (e) {
+        console.error("還原分桌落地快取失敗:", e);
+        return false;
+      }
+    }
+    /* ========================================================= */
+    /* 第 18-C 部分：物理一鍵重置、行動端鎖高與生命週期收官腳本       */
+    /* ========================================================= */
+
+    /**
+     * 物理重置功能：清空大表所有對局資料與當前桌次本地快取永固層
+     */
+    function confirmClearCurrentRound() {
+      var tableText = document.getElementById("top-table-display").innerText;
+      var tableNum = tableText.replace(/[^0-9]/g, "") || "1";
+
+      if (confirm("最高警告：確定要完全重置清空 [" + tableText + "] 的所有選手、1~16盤分數與統計資料嗎？\n此動作將一併永久抹除該桌的斷線本地快取！")) {
+        
+        localStorage.removeItem("xf_cup_scoreboard_table_" + tableNum); 
+        
+        document.getElementById("top-round-display").innerText = "1";
+        document.getElementById("top-table-display").innerText = "第 " + tableNum + " 桌";
+        
+        var seatClasses = { 1: 'btn-sign-a', 2: 'btn-sign-b', 3: 'btn-sign-c', 4: 'btn-sign-d' };
+        var seatNames = { 1: '東家', 2: '南家', 3: '西家', 4: '北家' };
+        
+        for (var i = 1; i <= 4; i++) {
+          document.getElementById("main-p" + i + "-no").innerText = "-";
+          
+          var nameCell = document.getElementById("main-p" + i + "-name");
+          if (nameCell) {
+            nameCell.innerHTML = "-";
+            nameCell.classList.remove("champion-gold-glow"); // 💡 剛性洗滌姓名黃金高亮殘留 [INDEX]
+          }
+          
+          document.getElementById("main-p" + i + "-total").innerText = "0";
+          document.getElementById("main-p" + i + "-rank").innerText = "-";
+          document.getElementById("tail-p" + i + "-deduct").innerText = "0";
+          document.getElementById("tail-p" + i + "-tablerank").innerText = "-";
+          document.getElementById("tail-p" + i + "-stdscore").innerText = "0";
+          
+          document.getElementById("main-p" + i + "-total").classList.remove("champion-gold-glow");
+          document.getElementById("main-p" + i + "-rank").classList.remove("champion-gold-glow");
+          
+          var btn = document.getElementById("btn-sign-" + i);
+          if (btn) {
+            btn.disabled = false; 
+            btn.style.cssText = ""; 
+            btn.className = "btn-sign-common " + seatClasses[i];
+            btn.innerHTML = seatNames[i] + "<br>確認";
+          }
+        }
+        
+        for (var r = 1; r <= 16; r++) {
+          ['A','B','C','D'].forEach(function(seat) {
+            var cell = document.getElementById("score-" + r + "-" + seat);
+            if (cell) cell.innerText = "-";
+          });
+        }
+        
+        // 重新灌入全新的方位1x3骨架，保證空殼乾淨
+        var defaultWinds = ["東南北西", "南東西北", "西北東南", "北西南東"];
+        for (var w = 1; w <= 4; w++) {
+          var windDom = document.getElementById("main-wind-" + w);
+          if (windDom) windDom.innerHTML = formatWind4Text(defaultWinds[w-1]);
+        }
+        
+        calculateTotals();
+        saveTableToLocalStorage();
+      }
+    }
+
+    function showLoadingOverlay(msg) {
+      var textDom = document.getElementById("loadingText");
+      var overlayDom = document.getElementById("loadingOverlay");
+      if (textDom) textDom.innerText = msg || "連線對接中...";
+      if (overlayDom) overlayDom.style.display = "flex";
+    }
+    
+    function hideLoadingOverlay() {
+      var overlayDom = document.getElementById("loadingOverlay");
+      if (overlayDom) overlayDom.style.display = "none";
+    }
+
+    /**
+     * 行動端適配：動態修正 Safari/Chrome 視窗工具列造成的 vh 溢出高度計算
+     */
+    function adjustMobileVh() {
+      var vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', vh + "px");
+      var mainContainer = document.getElementById("main-container");
+      if (mainContainer) mainContainer.style.height = "calc(var(--vh, 1vh) * 100)";
+    }
+
+    // ========================================================= 
+    // 終極完全體統一生命週期收官防線
+    // ========================================================= 
+    window.onload = function() {
+      adjustMobileVh();
+      window.addEventListener("resize", adjustMobileVh);
+      
+      closeSetupModal();
+      closeKeyboardModal();
+      closeRoundScoreModal();
+      
+      var activeTable = localStorage.getItem("xf_cup_active_table_num") || "1";
+      var tableDisplay = document.getElementById("top-table-display");
+      if (tableDisplay) tableDisplay.innerText = "第 " + activeTable + " 桌";
+      
+      var restored = loadTableFromLocalStorage();
+      if (!restored) {
+        // 💡 記憶巡航啟動：在完全沒有緩存時，網頁加載完畢立刻自動鋪平 1x3 盤次排版！ [INDEX]
+        var defaultWinds = ["東南北西", "南東西北", "西北東南", "北西南東"];
+        for (var w = 1; w <= 4; w++) {
+          var windDom = document.getElementById("main-wind-" + w);
+          if (windDom) windDom.innerHTML = formatWind4Text(defaultWinds[w-1]);
+        }
+        calculateTotals(); 
+      }
+      console.log("🀄 2026幸福盃國標麻將控台 - 16%加4欄均分21%・物理硬鎖・完全體決戰版落成 🀄");
+    };
+  </script>
+</body>
+</html>
