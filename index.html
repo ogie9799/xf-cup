@@ -612,7 +612,7 @@
           </div>
           <div class="meta-item">
             <label for="setup-date-input" style="font-size: 13px;">變更日期</label>
-            <input type="text" id="setup-date-input" class="input-meta-field" value="2026/06/06" placeholder="YYYY/MM/DD" style="border-radius: 0; height: 38px;">
+            <input type="text" id="setup-date-input" class="input-meta-field" value="26/06/06" placeholder="YYYY/MM/DD" style="border-radius: 0; height: 38px;">
           </div>
         </div>
         
@@ -903,9 +903,9 @@
     function openSetupModal() {
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
-      // 還原原始完整日期格式給輸入框（如果是 026 開頭則轉回 2026 供編輯）
+      // 還原原始完整日期格式給輸入框（如果是 26 開頭則轉回 2026 供編輯）
       var curDateDisplay = document.getElementById("top-date-display").innerText;
-      if (curDateDisplay.startsWith("026/")) {
+      if (curDateDisplay.startsWith("26/")) {
         curDateDisplay = "2026" + curDateDisplay.substring(3);
       }
       document.getElementById("setup-date-input").value = curDateDisplay;
@@ -1012,7 +1012,7 @@
       var setupRound = document.getElementById("setup-round-input").value || "1";
       var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
       
-      // 若輸入為 2026/06/06 格式，自動縮減顯示成 026/06/06
+      // 若輸入為 2026/06/06 格式，自動縮減顯示成 26/06/06
       var displayDate = setupDate;
       if (displayDate.length === 10 && displayDate.startsWith("2")) {
         displayDate = "0" + displayDate.substring(1);
