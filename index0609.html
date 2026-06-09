@@ -46,12 +46,21 @@
       width: 100% !important;
       max-width: 100% !important;
       border-collapse: collapse;
-      table-layout: fixed; /* 剛性欄寬控制，交由不對稱鋼骨管理 */
+      table-layout: fixed !important; /* 💡 剛性控制：交由物理硬核安全鎖強制定型 */
     }
+
     /* ========================================================= */
-    /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤 CSS               */
+    /* 💡 V5 決戰完全體：物理級 4 欄絕對等寬硬核安全鎖              */
+    /* 說明：全面覆蓋吸頂欄位與內容長度，鎖死第一欄 16%，後四欄各 21% */
     /* ========================================================= */
-    /* 建立防分層的吸頂骨架 */
+    #score-main-table th:nth-child(1), #score-main-table td:nth-child(1) { width: 16% !important; max-width: 16% !important; }
+    #score-main-table th:nth-child(2), #score-main-table td:nth-child(2) { width: 21% !important; max-width: 21% !important; }
+    #score-main-table th:nth-child(3), #score-main-table td:nth-child(3) { width: 21% !important; max-width: 21% !important; }
+    #score-main-table th:nth-child(4), #score-main-table td:nth-child(4) { width: 21% !important; max-width: 21% !important; }
+    #score-main-table th:nth-child(5), #score-main-table td:nth-child(5) { width: 21% !important; max-width: 21% !important; }
+    /* ========================================================= */
+    /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤外殼 CSS             */
+    /* ========================================================= */
     .sticky-header-row th, .sticky-header-row td {
       position: sticky;
       background-color: #ffffff;
@@ -59,7 +68,7 @@
       box-shadow: inset 0 -1px 0 #cbd5e1;
     }
     
-    /* 剛性層級高度校正 (精準對齊 16% + 21%*4 後面四欄絕對等寬之表頭) */
+    /* 剛性層級高度校正 */
     .sticky-row-1 th,  .sticky-row-1 td  { top: 0; z-index: 15; }
     .sticky-row-1b th, .sticky-row-1b td { top: 42px; z-index: 14; }
     .sticky-row-2 th,  .sticky-row-2 td  { top: 86px; }
@@ -88,44 +97,53 @@
       max-width: 310px;
       background-color: #1e293b;
       padding: 14px;
-      border-radius: 0; /* 保持剛性視覺 */
+      border-radius: 0;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      user-select: none;  /* 防止極速點擊時文字被選取 */
+      user-select: none;
     }
-    .keyboard-screen {
-      background-color: #0f172a;
-      color: #38bdf8;
-      font-size: 26px;
-      font-weight: bold;
-      text-align: right;
-      padding: 10px 14px;
-      border-radius: 0;
-      margin-bottom: 12px;
-      min-height: 44px;
-      box-sizing: border-box;
+    /* ========================================================= */
+    /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤外殼 CSS             */
+    /* ========================================================= */
+    .sticky-header-row th, .sticky-header-row td {
+      position: sticky;
+      background-color: #ffffff;
+      z-index: 10;
+      box-shadow: inset 0 -1px 0 #cbd5e1;
     }
     
-    .keyboard-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+    /* 剛性層級高度校正 */
+    .sticky-row-1 th,  .sticky-row-1 td  { top: 0; z-index: 15; }
+    .sticky-row-1b th, .sticky-row-1b td { top: 42px; z-index: 14; }
+    .sticky-row-2 th,  .sticky-row-2 td  { top: 86px; }
+    .sticky-row-3 th,  .sticky-row-3 td  { top: 130px; }
+    .sticky-row-4 th,  .sticky-row-4 td  { top: 162px; }
+    .sticky-row-5 th,  .sticky-row-5 td  { top: 194px; }
+    .sticky-row-6 th,  .sticky-row-6 td  { top: 232px; }
+
+    /* 遮罩層 - 彈出輸入或同步時鎖定背景 */
+    .custom-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
     }
-    
-    .btn-key {
-      height: 66px; 
-      font-size: 22px;
-      font-weight: bold;
-      background-color: #334155;
-      color: white;
-      border: none;
+
+    /* 獨立大數字鍵盤排版 */
+    .keyboard-box {
+      width: 92%;
+      max-width: 310px;
+      background-color: #1e293b;
+      padding: 14px;
       border-radius: 0;
-      -webkit-tap-highlight-color: transparent; /* 移除行動端藍色點擊高亮 */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      user-select: none;
     }
-    /* 剛性物理點擊反饋 */
-    .btn-key:active { background-color: #475569; }
-    .btn-key-action { background-color: #ea580c; }
-    .btn-key-action:active { background-color: #f97316; }
     /* ========================================================= */
     /* 第 4 部分：大數字鍵盤底部與合體計分盤外殼 CSS             */
     /* ========================================================= */
@@ -431,15 +449,15 @@
     <div id="table-scroll-wrapper">
       <table id="score-main-table">
         <!-- ========================================================= -->
-        <!-- 第 8 部分：後面 4 欄絕對等寬鋼骨欄寬配置                       -->
-        <!-- 說明：第一欄 16%，後續四欄各 21% 均分，兼顧對稱與四字平鋪不截斷  -->
+        <!-- 第 8 部分：大會等寬表格鋼骨與主控列一                       -->
+        <!-- 說明：與第1部分物理鎖完美互補，交由底層最高優先權控制分流   -->
         <!-- ========================================================= -->
         <colgroup>
-          <col style="width: 16%;"> <!-- 第 1 欄：初始化、策略 -->
-          <col style="width: 21%;"> <!-- 第 2 欄：日期、歷史紀錄 (均分 21%) -->
-          <col style="width: 21%;"> <!-- 第 3 欄：局次顯示 (均分 21% 絕對對稱) -->
-          <col style="width: 21%;"> <!-- 第 4 欄：桌次變更 (均分 21% 絕對對稱) -->
-          <col style="width: 21%;"> <!-- 第 5 欄：清空、保存上傳 (均分 21% 絕對對稱) -->
+          <col style="width: 16%;">
+          <col style="width: 21%;">
+          <col style="width: 21%;">
+          <col style="width: 21%;">
+          <col style="width: 21%;">
         </colgroup>
         <thead>
           
@@ -459,7 +477,7 @@
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               日期<br>
-              <!-- 💡 剛性優化：由 JS 模組洗滌控制，回歸純淨 6 碼（26/06/08）格式，絕不超載 -->
+              <!-- 💡 剛性全面去零洗滌線：由 JS 模組洗滌控制，回歸純淨 6 碼（26/06/08）格式 -->
               <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">26/06/08</span>
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
@@ -483,7 +501,7 @@
                 策略
               </button>
             </td>
-            <!-- 💡 21% 欄寬拓寬釋放威力：歷史紀錄 4 個國字完全單行平鋪，絕不折行 -->
+            <!-- 💡 物理安全鎖全力護航：歷史紀錄 4 個國字完全單行平鋪，拒絕擠壓換行 -->
             <td colspan="2" style="padding: 0; margin: 0; background-color: #ffffff; height: 44px; border: 1px solid #cbd5e1;">
               <button type="button" class="btn-top-gold" style="background-color: #7c3aed; height: 100%; width: 100%; font-size: 13px; font-weight: bold; border: none; padding: 0; margin: 0; color: white; display: block; border-radius: 0; white-space: nowrap;" onclick="triggerLoadHistory()">
                 歷史紀錄
@@ -509,7 +527,7 @@
             <td id="main-p4-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; line-height: 1.2;">-</td>
           </tr>
           
-          <!-- 選手姓名列（高度剛性配置 40px，智慧分流由修復後的 JS 承接） -->
+          <!-- 選手姓名列（高度剛性配置 40px，智慧對拆分流由 JS 承接） -->
           <tr class="sticky-header-row sticky-row-4 bg-amber">
             <th style="height: 40px; font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">姓名</th>
             <td id="main-p1-name" class="name-display-cell" style="border: 1px solid #cbd5e1;">-</td>
@@ -536,7 +554,7 @@
           </tr>
           
           <!-- 方位盤次對齊抬頭列 -->
-          <!-- 💡 核心優化修正：移除原本寫死的硬編碼，改為完全乾淨的 ID 鋼骨，交由 JS 於初始化與還原時剛性注入 1x3 換行排版 -->
+          <!-- 💡 核心優化修正：改為純 ID 鋼骨，完全移除寫死的文字，後續交由 JS 自動執行 1x3 智慧折行注入 [INDEX] -->
           <tr style="background-color: #1e293b; color: white; font-size: 13px; font-weight: bold;">
             <th style="height: 32px; background-color: #0f172a; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">盤次</th>
             <td id="main-wind-1" class="wind-display-cell" style="color: #fca5a5; background-color: #1e293b; border: 1px solid #cbd5e1;"></td>
@@ -751,7 +769,7 @@
         <label style="display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #1e293b;">1. 胡牌番數 (0代表荒庄)：</label>
         <div id="score-input-fan" style="width: 100%; height: 46px; background-color: #f1f5f9; border: 2px solid #334155; border-radius: 0; line-height: 46px; text-align: center; font-size: 20px; font-weight: bold; color: #dc2626; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 6px;">0</div>
         
-        <!-- 💡 核心優化：取消寫死風位，改為固定席位代號，防止方位輪轉時判斷錯亂 -->
+        <!-- 💡 規則防護：取消寫死風位，改為席位代號，防止方位輪轉時判斷錯亂 -->
         <label style="display: block; font-weight: bold; font-size: 12px; margin-bottom: 3px; color: #1e293b;">2. 選擇胡牌選手：</label>
         <div class="selector-grid-4" style="margin-bottom: 6px; gap: 4px; display: grid; grid-template-columns: repeat(4, 1fr);">
           <button type="button" id="btn-winner-A" class="btn-select-box" style="border-radius: 0; height: 46px !important; padding: 0; font-size: 13px; -webkit-tap-highlight-color: transparent;" onclick="selectWinner('A')">選手 1 (A)</button>
@@ -881,7 +899,7 @@
 
     /**
      * 智慧姓名分流引擎
-     * 4個字時：上面2字，下面2字；3個字含以下：同列顯示 (不折行)
+     * 4個字時：上面2字，下面2字；3個字含以下：同列顯示 (不折行) [INDEX]
      */
     function formatName2x2(name) {
       if (name === undefined || name === null) return "-";
@@ -896,7 +914,7 @@
 
     /**
      * 智慧盤次方位分流引擎
-     * 4個字時（如東南北西）：上面1個字，下面3個字；3個字含以下：同列顯示
+     * 4個字時（如東南北西）：上面1個字，下面3個字；3個字含以下：同列顯示 [INDEX]
      */
     function formatWind4Text(windStr) {
       if (!windStr || windStr === "-") return "-";
@@ -915,7 +933,7 @@
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
       var curDateDisplay = document.getElementById("top-date-display").innerText.trim();
-      // 還原至設定框時，若原本為 2 碼微縮版 (26/06/08) 則自動補回 2026 方便閱讀與編輯
+      // 還原至設定框時，若原本為 2 碼微縮版 (26/06/08) 則自動補回 2026 方便閱讀與編輯 [INDEX]
       if (curDateDisplay.length === 8) { 
         curDateDisplay = "20" + curDateDisplay;
       }
@@ -1015,18 +1033,18 @@
     /* ========================================================= */
 
     /**
-     * 套用並建立本局
+     * 套用並建立本局（強化物理重載洗滌完全體）
      */
     function applyAndBuildRound() {
       var setupRound = document.getElementById("setup-round-input").value || "1";
       var setupDate = document.getElementById("setup-date-input").value || "2026/06/08";
       
-      // 💡 剛性全面洗滌：強制過濾並切除 20 或 00，永固為純淨 6 碼 (26/06/08) 格式，防止破版
+      // 💡 剛性全面洗滌線：強制過濾並切除 20 或 00，永固為純淨 6 碼 (26/06/08) 格式，防止破版 [INDEX]
       var displayDate = setupDate.trim();
       if (displayDate.length === 10) {
         displayDate = displayDate.substring(2); 
       } else if (displayDate.startsWith("00")) {
-        displayDate = displayDate.substring(4); // 徹底洗刷 0026 的前導字
+        displayDate = displayDate.substring(4); // 徹底清除 0026 的前導字
       } else if (displayDate.length > 8) {
         displayDate = displayDate.slice(-8);
       }
@@ -1034,7 +1052,7 @@
       document.getElementById("top-round-display").innerText = setupRound;
       document.getElementById("top-date-display").innerText = displayDate;
       
-      // 💡 剛性動態注入 1x3 盤次分流，徹底解決截圖中的雙行擠壓痛點
+      // 💡 剛性動態注入 1x3 盤次分流，徹底解決截圖中的雙行擠壓痛點 [INDEX]
       var defaultWinds = ["東南北西", "南東西北", "西北東南", "北西南東"];
       for (var w = 1; w <= 4; w++) {
         var windDom = document.getElementById("main-wind-" + w);
@@ -1046,7 +1064,7 @@
         var nameVal = document.getElementById("setup-p" + i + "-name").value.trim() || "-";
         
         document.getElementById("main-p" + i + "-no").innerText = (noVal === "") ? "-" : noVal;
-        // 💡 2x2 智慧姓名分流引擎強制執行
+        // 💡 2x2 智慧姓名分流引擎強制執行 [INDEX]
         document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(nameVal);
       }
       
@@ -1103,7 +1121,7 @@
     }
 
     /**
-     * 合體計分盤算分核心：完全對齊荒庄與自摸規則，並注入 V5 零和安全鎖
+     * 合體計分盤算分核心：完全對齊荒庄與自摸規則，並注入 V5 零和安全鎖 [INDEX]
      */
     function submitRoundScoreCalc() {
       var fan = parseInt(currentFanString, 10) || 0;
@@ -1148,7 +1166,7 @@
         });
       }
       
-      // 💡 V5 底層數據庫單局絕對零和校驗 (Check_Sum = 0)
+      // 💡 V5 底層數據庫單局絕對零和校驗 (Check_Sum = 0) [INDEX]
       var checkSum = roundScores.A + roundScores.B + roundScores.C + roundScores.D;
       if (checkSum !== 0) {
         alert("【核心錯誤】數據結構發生非零和異常，控台已自動攔截寫入！");
@@ -1169,7 +1187,7 @@
     }
 
     /**
-     * 終極計分大腦：全自動累計、紅藍配色、標準分共享與黃底唯一冠軍高亮引擎
+     * 終極計分大腦：全自動累計、紅藍配色、標準分共享與黃底唯一冠軍高亮引擎 [INDEX]
      */
     function calculateTotals() {
       var seats = ['A', 'B', 'C', 'D'];
@@ -1231,7 +1249,7 @@
       var absoluteChampionSeat = null;
       if (sorted.length > 0 && maxScore !== -99999) {
         var potentialChampions = sorted.filter(function(x) { return x.score === sorted[0].score; });
-        absoluteChampionSeat = potentialChampions[0].seatIndex; // 剛性由座位順位破同分 [INDEX]
+        absoluteChampionSeat = potentialChampions[0].seatIndex; // 剛性由東南西北席位順位破同分 [INDEX]
       }
 
       playersResult.forEach(function(p) {
@@ -1273,275 +1291,3 @@
         }
       });
     }
-    /* ========================================================= */
-    /* 第 18 部分：大數字鍵盤確認、分桌快取永固層與生命週期收官腳本  */
-    /* ========================================================= */
-
-    /**
-     * 獨立大數字鍵盤按鍵字串編編寫（修補符號殘留，防止 NaN 鎖死）
-     */
-    function pressKey(key) {
-      if (key === 'C') {
-        if (currentKbValue.length > 0) {
-          currentKbValue = currentKbValue.substring(0, currentKbValue.length - 1);
-        }
-      } else if (key === '+/-') {
-        if (currentKbValue !== "" && currentKbValue !== "0" && currentKbValue !== "-") {
-          currentKbValue = currentKbValue.startsWith("-") ? currentKbValue.substring(1) : "-" + currentKbValue;
-        } else if (currentKbValue === "" || currentKbValue === "0") {
-          currentKbValue = "-";
-        }
-      } else {
-        if (currentKbValue.length < 5) {
-          if (currentKbValue === "0" || currentKbValue === "-0") {
-            currentKbValue = currentKbValue.startsWith("-") ? "-" + key : key;
-          } else {
-            currentKbValue += key;
-          }
-        }
-      }
-      
-      var displayDom = document.getElementById("keyboard-display");
-      if (displayDom) {
-        displayDom.innerText = (currentKbValue === "" || currentKbValue === "-") ? (currentKbValue === "-" ? "-" : "0") : currentKbValue;
-      }
-    }
-
-    /**
-     * 大數字鍵盤值確認寫回大表
-     */
-    function submitKeyboardValue() {
-      var finalVal = currentKbValue === "" ? "0" : currentKbValue;
-      if (finalVal === "-") finalVal = "0";
-      
-      if (currentKbMode === "DEDUCT") {
-        if (currentKbTarget) {
-          currentKbTarget.innerText = parseInt(finalVal, 10) || 0;
-        }
-        calculateTotals();
-        saveTableToLocalStorage();
-      } else if (currentKbMode === "TABLE") {
-        var tableNum = parseInt(finalVal, 10) || 1;
-        if (tableNum < 1) tableNum = 1;
-        if (tableNum > 60) tableNum = 60; 
-        
-        if (currentKbTarget) {
-          currentKbTarget.innerText = "第 " + tableNum + " 桌";
-        }
-        saveTableToLocalStorage();
-      }
-      closeKeyboardModal();
-    }
-
-    /**
-     * 選手確認簽名一鍵變灰鎖定（剛性 2x2 結構防抽動）
-     */
-    function handleSignClick(btnIndex, seat) {
-      var btn = document.getElementById("btn-sign-" + btnIndex);
-      if (!btn) return;
-      
-      var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
-      var curSeatName = seatNames[seat] || '選手';
-      
-      btn.innerHTML = curSeatName + "<br>已確";
-      btn.disabled = true; 
-      btn.style.backgroundColor = "#64748b";
-      btn.style.color = "#cbd5e1";
-      
-      saveTableToLocalStorage(); 
-    }
-
-    /**
-     * 簽名按鈕全重設解鎖函數
-     */
-    function resetAllSignButtons() {
-      var seatClasses = { 1: 'btn-sign-a', 2: 'btn-sign-b', 3: 'btn-sign-c', 4: 'btn-sign-d' };
-      var seatNames = { 1: '東家', 2: '南家', 3: '西家', 4: '北家' };
-      for (var i = 1; i <= 4; i++) {
-        var btn = document.getElementById("btn-sign-" + i);
-        if (btn) {
-          btn.disabled = false;
-          btn.style.cssText = ""; 
-          btn.className = "btn-sign-common " + seatClasses[i];
-          btn.innerHTML = seatNames[i] + "<br>確認";
-        }
-      }
-    }
-
-    /**
-     * 實時落地寫入 LocalStorage 快取永固層（採分桌獨立金鑰隔離）
-     */
-    function saveTableToLocalStorage() {
-      if (isRestoringFromCache) return; 
-
-      var tableDisplay = document.getElementById("top-table-display");
-      if (!tableDisplay) return;
-      
-      var tableNum = tableDisplay.innerText.replace(/[^0-9]/g, "") || "1";
-      var seats = ['A', 'B', 'C', 'D'];
-      
-      localStorage.setItem("xf_cup_active_table_num", tableNum);
-      
-      var dateInput = document.getElementById("setup-date-input");
-      var payload = {
-        tableNum: tableNum,
-        gameRound: document.getElementById("top-round-display").innerText,
-        date: dateInput ? dateInput.value : "2026/06/08",
-        players: {}
-      };
-
-      for (var i = 1; i <= 4; i++) {
-        var seatKey = seats[i-1];
-        var roundScores = [];
-        
-        for (var r = 1; r <= 16; r++) {
-          var cell = document.getElementById("score-" + r + "-" + seatKey);
-          roundScores.push(cell ? cell.innerText.trim() : "-");
-        }
-        
-        var btn = document.getElementById("btn-sign-" + i);
-        var nameCell = document.getElementById("main-p" + i + "-name");
-        var rawName = nameCell ? nameCell.innerHTML.replace(/<br>/g, "").trim() : "-";
-        
-        payload.players[seatKey] = {
-          no: document.getElementById("main-p" + i + "-no").innerText.trim(),
-          name: rawName,
-          deduct: document.getElementById("tail-p" + i + "-deduct").innerText.trim(),
-          isSigned: (btn && btn.disabled) ? "Y" : "N",
-          rounds: roundScores
-        };
-      }
-      
-      localStorage.setItem("xf_cup_scoreboard_table_" + tableNum, JSON.stringify(payload));
-    }
-
-    /**
-     * 快取讀取防禦層
-     */
-    function loadTableFromLocalStorage() {
-      var tableDisplay = document.getElementById("top-table-display");
-      var tableNum = tableDisplay ? (tableDisplay.innerText.replace(/[^0-9]/g, "") || "1") : "1";
-      
-      var activeTableNum = localStorage.getItem("xf_cup_active_table_num");
-      if (activeTableNum) tableNum = activeTableNum;
-
-      var cached = localStorage.getItem("xf_cup_scoreboard_table_" + tableNum);
-      if (!cached) return false;
-      
-      try {
-        var data = JSON.parse(cached);
-        restoreTableFromHistoryPayload(data);
-        return true;
-      } catch (e) {
-        console.error("還原分桌落地快取失敗:", e);
-        return false;
-      }
-    }
-
-    /**
-     * 物理重置功能：清空大表所有對局資料與當前桌次本地快取永固層
-     */
-    function confirmClearCurrentRound() {
-      var tableText = document.getElementById("top-table-display").innerText;
-      var tableNum = tableText.replace(/[^0-9]/g, "") || "1";
-
-      if (confirm("最高警告：確定要完全重置清空 [" + tableText + "] 的所有選手、1~16盤分數與統計資料嗎？\n此動作將一併永久抹除該桌的斷線本地快取！")) {
-        
-        localStorage.removeItem("xf_cup_scoreboard_table_" + tableNum); 
-        
-        document.getElementById("top-round-display").innerText = "1";
-        document.getElementById("top-table-display").innerText = "第 " + tableNum + " 桌";
-        
-        var seatClasses = { 1: 'btn-sign-a', 2: 'btn-sign-b', 3: 'btn-sign-c', 4: 'btn-sign-d' };
-        var seatNames = { 1: '東家', 2: '南家', 3: '西家', 4: '北家' };
-        
-        for (var i = 1; i <= 4; i++) {
-          document.getElementById("main-p" + i + "-no").innerText = "-";
-          
-          var nameCell = document.getElementById("main-p" + i + "-name");
-          if (nameCell) {
-            nameCell.innerHTML = "-";
-            nameCell.classList.remove("champion-gold-glow"); // 💡 剛性洗滌姓名黃金高亮殘留
-          }
-          
-          document.getElementById("main-p" + i + "-total").innerText = "0";
-          document.getElementById("main-p" + i + "-rank").innerText = "-";
-          document.getElementById("tail-p" + i + "-deduct").innerText = "0";
-          document.getElementById("tail-p" + i + "-tablerank").innerText = "-";
-          document.getElementById("tail-p" + i + "-stdscore").innerText = "0";
-          
-          document.getElementById("main-p" + i + "-total").classList.remove("champion-gold-glow");
-          document.getElementById("main-p" + i + "-rank").classList.remove("champion-gold-glow");
-          
-          var btn = document.getElementById("btn-sign-" + i);
-          if (btn) {
-            btn.disabled = false; 
-            btn.style.cssText = ""; 
-            btn.className = "btn-sign-common " + seatClasses[i];
-            btn.innerHTML = seatNames[i] + "<br>確認";
-          }
-        }
-        
-        for (var r = 1; r <= 16; r++) {
-          ['A','B','C','D'].forEach(function(seat) {
-            var cell = document.getElementById("score-" + r + "-" + seat);
-            if (cell) cell.innerText = "-";
-          });
-        }
-        
-        calculateTotals();
-        saveTableToLocalStorage();
-      }
-    }
-
-    function showLoadingOverlay(msg) {
-      var textDom = document.getElementById("loadingText");
-      var overlayDom = document.getElementById("loadingOverlay");
-      if (textDom) textDom.innerText = msg || "連線對接中...";
-      if (overlayDom) overlayDom.style.display = "flex";
-    }
-    
-    function hideLoadingOverlay() {
-      var overlayDom = document.getElementById("loadingOverlay");
-      if (overlayDom) overlayDom.style.display = "none";
-    }
-
-    /**
-     * 行動端適配：動態修正 Safari/Chrome 視窗工具列造成的 vh 溢出高度計算
-     */
-    function adjustMobileVh() {
-      var vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', vh + "px");
-      var mainContainer = document.getElementById("main-container");
-      if (mainContainer) mainContainer.style.height = "calc(var(--vh, 1vh) * 100)";
-    }
-
-    // ========================================================= 
-    // 終極完全體統一生命週期收官防線
-    // ========================================================= 
-    window.onload = function() {
-      adjustMobileVh();
-      window.addEventListener("resize", adjustMobileVh);
-      
-      closeSetupModal();
-      closeKeyboardModal();
-      closeRoundScoreModal();
-      
-      var activeTable = localStorage.getItem("xf_cup_active_table_num") || "1";
-      var tableDisplay = document.getElementById("top-table-display");
-      if (tableDisplay) tableDisplay.innerText = "第 " + activeTable + " 桌";
-      
-      var restored = loadTableFromLocalStorage();
-      if (!restored) {
-        var defaultWinds = ["東南北西", "南東西北", "西北東南", "北西南東"];
-        for (var w = 1; w <= 4; w++) {
-          var windDom = document.getElementById("main-wind-" + w);
-          if (windDom) windDom.innerHTML = formatWind4Text(defaultWinds[w-1]);
-        }
-        calculateTotals(); 
-      }
-      console.log("🀄 2026幸福盃國標麻將控台 - 16%加4欄均分21%・6碼洗滌日期・完全體決戰版滿血落成 🀄");
-    };
-  </script>
-</body>
-</html>
