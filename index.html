@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2028幸福盃國標麻將隊制賽
+              2029幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -470,13 +470,13 @@
             <td id="main-p4-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
           </tr>
           
-         <!-- 💡 選手姓名列：解除剛性 height，改用 line-height 搭配上下 padding 預留分流彈性 -->
+         <!-- 💡 選手姓名列：左右內邊距歸零，騰出橫向最大空間；上下內邊距加強，留出垂直分流美感 -->
           <tr class="sticky-header-row sticky-row-4 bg-amber">
-            <th style="font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; padding: 4px 0 !important;">姓名</th>
-            <td id="main-p1-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; line-height: 1.3; padding: 4px 2px !important;">-</td>
-            <td id="main-p2-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; line-height: 1.3; padding: 4px 2px !important;">-</td>
-            <td id="main-p3-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; line-height: 1.3; padding: 4px 2px !important;">-</td>
-            <td id="main-p4-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; line-height: 1.3; padding: 4px 2px !important;">-</td>
+            <th style="font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">姓名</th>
+            <td id="main-p1-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; padding: 6px 0px !important;">-</td>
+            <td id="main-p2-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; padding: 6px 0px !important;">-</td>
+            <td id="main-p3-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; padding: 6px 0px !important;">-</td>
+            <td id="main-p4-name" style="font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; padding: 6px 0px !important;">-</td>
           </tr>
 
           
@@ -871,23 +871,31 @@
     /**
      * 輔助函數：將選手姓名剛性轉化為上下排各兩個字的 2x2 格式
      */
-    function formatName2x2(name) {
+   function formatName2x2(name) {
       if (!name || name === "-") return "-";
-      // 如果是四個字，直接對半拆（如：司徒穎芝 轉為 司徒<br>穎芝）
-      if (name.length === 4) {
-        return name.substring(0, 2) + "<br>" + name.substring(2, 4);
+      var cleanName = name.trim();
+      
+      // 🟢 狀況一：剛好 3 個字 -> 強制一列平鋪，並透過 CSS 微調字距與寬度相容
+      if (cleanName.length === 3) {
+        return '<span style="display:inline-block; white-space:nowrap; letter-spacing:-0.5px;">' + cleanName + '</span>'; 
       }
-      // 如果是三個字，固定上排兩個、下排一個
-      if (name.length === 3) {
-        return name.substring(0, 2) + "<br>" + name.substring(2, 3);
+      
+      // 🟢 狀況二：剛好 4 個字 -> 切成 2x2（上下各 2 字），並拉大行高（line-height）撐出大賽立體感
+      if (cleanName.length === 4) {
+        return '<div style="line-height: 1.4; padding: 2px 0;">' + 
+                 cleanName.substring(0, 2) + '<br>' + cleanName.substring(2, 4) + 
+               '</div>';
       }
-      // 其餘長度依中位數剛性對拆折行
-      if (name.length > 4) {
-        var mid = Math.ceil(name.length / 2);
-        return name.substring(0, mid) + "<br>" + name.substring(mid);
+      
+      // 其餘長度自適應折行
+      if (cleanName.length > 4) {
+        var mid = Math.ceil(cleanName.length / 2);
+        return '<div style="line-height: 1.3;">' + cleanName.substring(0, mid) + '<br>' + cleanName.substring(mid) + '</div>';
       }
-      return name;
+      
+      return cleanName;
     }
+
 
     /**
      * 賽事初始化設定彈窗控制項
