@@ -1011,17 +1011,22 @@
     /**
      * 套用並建立本局
      */
-    function applyAndBuildRound() {
+     function applyAndBuildRound() {
       var setupRound = document.getElementById("setup-round-input").value || "1";
-      var setupDate = document.getElementById("setup-date-input").value || "20260606";
+      var setupDate = document.getElementById("setup-date-input").value || "20260607";
       
-      // 若輸入為 20260606 格式，自動縮減顯示成 20260606
-      var displayDate = setupDate;
-      if (displayDate.length === 10 && displayDate.startsWith("2")) {
-        displayDate = "0" + displayDate.substring(1);
+      // 💡 剛性鐵壁防線：清洗拔除所有斜線 / 與橫線 -
+      var displayDate = maskDateTo8Digits(setupDate);
+      
+      // 💡 終極靶向熔斷鎖：如果字串長度大於 8 碼（例如因為舊快取殘留變成 202660607 共有 9 碼）
+      // 強制將其攔截並硬性校正回復原廠標準的 "20260607"，徹底封死 66 的重組陰影！
+      if (displayDate.length > 8) {
+        displayDate = displayDate.substring(0, 4) + displayDate.substring(displayDate.length - 4);
+        // 如果手滑打更長，直接強制熔斷還原為標準 20260607
+        if (displayDate.length !== 8) displayDate = "20260607";
       }
       
-      // 寫入頂部狀態欄
+      // 實體寫入頂部常駐大表
       document.getElementById("top-round-display").innerText = setupRound;
       document.getElementById("top-date-display").innerText = displayDate;
       
