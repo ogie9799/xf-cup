@@ -155,7 +155,7 @@
       background-color: #1e293b; 
     }
     .btn-combo-key {
-      height: 46px !important; /* 💡 復原動作：高度由 36px 調回 46px 滿血外觀，降低高壓誤觸 */
+      height: 46px !important; /* 💡 復原 46px 滿血手感，防止快速盲打誤觸 */
       background-color: #334155;
       color: white;
       font-size: 17px;
@@ -176,7 +176,7 @@
     }
     .btn-combo-half {
       flex: 1; 
-      height: 46px !important; /* 💡 功能收尾按鈕同步維持 46px 紮實手感 */
+      height: 46px !important; 
       font-size: 15px;
       font-weight: bold;
       border: none;
@@ -187,7 +187,7 @@
     .btn-combo-submit { background-color: #16a34a; color: white; }
     .btn-combo-back { background-color: #dc2626; color: white; }
     /* ========================================================= */
-    /* 第 4 部分：初始化設定彈窗樣式與計分大表單元格 CSS           */
+    /* 第 4 部分：初始化設定彈窗樣式與終極鐵壁單行平鋪 CSS         */
     /* ========================================================= */
     .modal-content-box {
       width: 92%;
@@ -274,19 +274,41 @@
       color: #334155;
       font-weight: bold;
     }
+
+    /* 💡 終極鐵壁防禦：大表單元格剛性鎖死不換行 */
     #score-main-table th, #score-main-table td {
       border: 1px solid #cbd5e1;
       text-align: center;
       padding: 0 !important; 
-      font-size: 14px;
+      margin: 0 !important;
       vertical-align: middle;
       line-height: 1.3;
+      word-break: keep-all !important; 
+      white-space: nowrap !important;  
     }
     #score-main-table th.bg-navy, #score-main-table td.bg-navy { 
       background-color: #1a365d !important; 
       color: #ffffff !important; 
     }
     .bg-amber { background-color: #fef3c7; }
+
+    /* 💡 日期專用極限微縮（騰出所有橫向像素，確保8碼完整不截斷） */
+    #top-date-display {
+      font-size: 9px !important;      
+      letter-spacing: -0.6px !important; 
+      line-height: 1 !important;
+      display: block !important;
+    }
+
+    /* 💡 選手姓名單行平鋪鋼骨 */
+    .td-name-steel {
+      font-size: 11px !important;      
+      font-weight: bold !important;
+      letter-spacing: -0.3px !important; 
+      white-space: nowrap !important;
+      overflow: hidden !important;     
+      text-overflow: ellipsis !important; 
+    }
     .btn-round-trigger {
       width: 100% !important;
       height: 100% !important;
@@ -300,7 +322,7 @@
     }
     .btn-round-trigger:active { background-color: #1e293b; }
     /* ========================================================= */
-    /* 第 5 部分：尾部簽名樣式、排行高亮與大表欄架構 CSS             */
+    /* 第 5 部分：尾部簽名樣式、排行高亮與黃金大表欄架構          */
     /* ========================================================= */
     .bg-tail-row { background-color: #f8fafc; font-weight: bold; }
     .bg-tail-label { background-color: #334155; color: white; font-weight: bold; font-size: 13px; border: 1px solid #cbd5e1; }
@@ -342,7 +364,6 @@
       cursor: pointer;
       font-size: 14px;
     }
-    /* 💡 解耦勝負手專用高亮狀態：正統色塊填滿 */
     .btn-select-box.active-a { background-color: #2563eb !important; color: white !important; border-color: #1d4ed8 !important; }
     .btn-select-box.active-b { background-color: #16a34a !important; color: white !important; border-color: #15803d !important; }
     .btn-select-box.active-c { background-color: #eab308 !important; color: #000000 !important; border-color: #a16207 !important; } 
@@ -405,10 +426,10 @@
                 初始化
               </button>
             </td>
-            <!-- 💡 日期欄位物理優化：字型鎖定 10px，徹底釋放 14% 欄寬內的所有像素，保證 8 碼不截斷完全呈現 -->
-            <td style="font-size: 10px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.2; border: 1px solid #cbd5e1; vertical-align: middle;">
-              日期<br>
-              <span id="top-date-display" style="font-size: 10px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap; letter-spacing: -0.5px;">2026/06/06</span>
+            <!-- 💡 日期終極瘦身：將「日期」與數字緊湊排版，搭配 9px 鐵壁樣式，徹底釋放 14% 欄寬內的所有像素，保證 8 碼不截斷完全呈現 -->
+            <td style="padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; border: 1px solid #cbd5e1; vertical-align: middle;">
+              <span style="font-size: 9px; font-weight: bold; display: block; color: #64748b; transform: scale(0.9); margin-bottom: 2px;">日期</span>
+              <span id="top-date-display">2026/06/06</span>
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               局次<br>
@@ -455,13 +476,13 @@
             <td id="main-p4-no" style="font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">-</td>
           </tr>
           
-          <!-- 💡 選手姓名列終極防禦：取消 2x2 拆行！字型鎖定 12px，強硬規範單行平鋪，確保 4 字姓名不折行 -->
+          <!-- 💡 選手姓名列終極防禦：套用 td-name-steel 鋼骨樣式，單行完全平鋪不折行 -->
           <tr class="sticky-header-row sticky-row-4 bg-amber">
             <th style="height: 40px; font-weight: bold; background-color: #334155; color: white; font-size: 13px; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle;">姓名</th>
-            <td id="main-p1-name" style="font-size: 12px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden;">-</td>
-            <td id="main-p2-name" style="font-size: 12px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden;">-</td>
-            <td id="main-p3-name" style="font-size: 12px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden;">-</td>
-            <td id="main-p4-name" style="font-size: 12px; font-weight: bold; border: 1px solid #cbd5e1; text-align: center; vertical-align: middle; white-space: nowrap; overflow: hidden;">-</td>
+            <td id="main-p1-name" class="td-name-steel">-</td>
+            <td id="main-p2-name" class="td-name-steel">-</td>
+            <td id="main-p3-name" class="td-name-steel">-</td>
+            <td id="main-p4-name" class="td-name-steel">-</td>
           </tr>
           
           <!-- 累計總分列 -->
@@ -509,7 +530,7 @@
                   '<td id="score-' + r + '-A" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
                   '<td id="score-' + r + '-B" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
                   '<td id="score-' + r + '-C" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
-                  '<td id="score-' + r + '-D" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; middle;">-</td>' +
+                  '<td id="score-' + r + '-D" style="font-weight: bold; color: #64748b; text-align: center; border: 1px solid #cbd5e1; font-size: 15px; vertical-align: middle;">-</td>' +
                 '</tr>'
               );
             }
@@ -662,7 +683,7 @@
     </div>
   </div>
 
-  <!-- 獨立全域實體大數字鍵盤（專供變更桌次與扣分調整使用，與大表計分盤完全解耦） -->
+  <!-- 獨立全域實體大數字鍵盤 -->
   <div id="modal-keyboard" class="custom-modal-overlay" style="display: none; position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important; z-index: 99999 !important; display: flex !important; align-items: center !important; justify-content: center !important;">
     <div class="keyboard-box" style="border-radius: 0; border: 3px solid #475569; background-color: #1e293b; margin: auto;">
       <div id="kyboard-title" style="color: #94a3b8; font-size: 14px; font-weight: bold; margin-bottom: 8px; text-align: center;">大數字鍵盤</div>
@@ -760,8 +781,11 @@
       100% { transform: rotate(360deg); }
     }
   </style>
-
   <script>
+    // ========================================================= 
+    // 第 14 部分：API 節點配置與全域動態暫存器初始化             
+    // ========================================================= 
+
     // 跨網域 API 節點配置，請將 GAS 重新部署發布後的實體網址貼在此處
     var BACKEND_API_URL = "https://google.com";
 
@@ -838,12 +862,12 @@
     }
 
     /**
-     * 💡 配合 14%:21.5% 新版面優化：姓名改為單行平鋪完全不換行，直接原樣回傳
-     * 目的：防止原 2x2 拆行在中文字少或英數字混合時產生不規則抽動，保持鋼骨工整
+     * 💡 鐵壁版對齊優化：徹底移除 <br> 折行代碼，原樣輸出純淨字串！
+     * 目的：配合 CSS 的 td-name-steel 單行平鋪鋼骨，實現 4 字姓名絕對在同一個橫行
      */
     function formatName2x2(name) {
       if (!name || name === "-") return "-";
-      return name.trim(); 
+      return String(name).trim(); 
     }
     /**
      * 賽事初始化設定彈窗控制項
@@ -860,8 +884,8 @@
       
       for (var i = 1; i <= 4; i++) {
         var noText = document.getElementById("main-p" + i + "-no").innerText;
-        // 還原姓名至設定框時，自動抹除換行符號（相容舊格式）
-        var nameText = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, "");
+        // 還原姓名至設定框時，抹除可能殘留的換行符號（徹底清空舊版影響）
+        var nameText = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br\s*\/?>/gi, "");
         document.getElementById("setup-p" + i + "-no").value = noText === "-" ? "" : noText;
         document.getElementById("setup-p" + i + "-name").value = nameText === "-" ? "" : nameText;
       }
@@ -949,7 +973,7 @@
         
         document.getElementById("main-p" + i + "-no").innerText = (noVal === "" || noVal === "(自動姓名)") ? "-" : noVal;
         
-        // 呼叫全新單行平鋪引擎
+        // 呼叫全新單行平鋪格式化引擎
         document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(nameVal);
       }
       
@@ -1060,7 +1084,7 @@
 
       // 3. 國標麻將算分規則核心公式
       if (selectedWinner === selectedLoser) {
-        // 💡 剛性修正：正統國標自摸公式（每家底分8 + 番數 + 2分自摸獎勵分）
+        // 💡 正統國標自摸公式（每家底分8 + 番數 + 2分自摸獎勵分）
         var losePoints = -(8 + fan + 2);
         var winPoints = (8 + fan + 2) * 3;
         seats.forEach(function(seat) {
@@ -1267,7 +1291,7 @@
       saveTableToLocalStorage(); 
     }
     /* ========================================================= */
-    /* 第 18-1 部分：跨網域保存上傳與歷史紀錄同步腳本             */
+    /* 第 19 部分：跨網域保存上傳、歷史紀錄同步與資料包還原引擎       */
     /* ========================================================= */
 
     /**
@@ -1284,7 +1308,7 @@
       for (var i = 1; i <= 4; i++) {
         seatsData.push({
           no: document.getElementById("main-p" + i + "-no").innerText,
-          name: document.getElementById("main-p" + i + "-name").innerText, // 讀取平鋪後的純文字姓名
+          name: document.getElementById("main-p" + i + "-name").innerText, // 💡 讀取平鋪後的純文字姓名
           total: document.getElementById("main-p" + i + "-total").innerText,
           rank: document.getElementById("main-p" + i + "-rank").innerText,
           std: document.getElementById("tail-p" + i + "-stdscore").innerText
@@ -1337,6 +1361,7 @@
         alert("⚠️ 同步失敗：後端未響應或連線中斷。");
       });
     }
+
     /**
      * 歷史紀錄資料包反向渲染還原引擎
      */
@@ -1359,7 +1384,8 @@
         var pData = data.players[seatKey];
         
         document.getElementById("main-p" + i + "-no").innerText = pData.no;
-        document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(pData.name); // 呼叫單行平鋪引擎
+        // 💡 還原歷史戰況姓名時，同步啟動單行平鋪鋼骨引擎，徹底杜絕折行
+        document.getElementById("main-p" + i + "-name").innerHTML = formatName2x2(pData.name); 
         document.getElementById("tail-p" + i + "-deduct").innerText = pData.deduct;
         
         for (var r = 1; r <= 16; r++) {
@@ -1393,7 +1419,6 @@
       }
       calculateTotals();
     }
-
     /**
      * 快取讀取防禦層
      */
@@ -1503,7 +1528,7 @@
     }
 
     /**
-     * 🧩 雲端遮罩層控制項（完美咬合 12、16、18 部分命名錯位，消滅 ReferenceError）
+     * 🧩 雲端遮罩層控制項（完美咬合 12、16、19 部分命名錯位，消滅 ReferenceError）
      */
     function showLoadingOverlay(msg) {
       document.getElementById("loadingText").innerText = msg;
