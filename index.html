@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2021幸福盃國標麻將隊制賽
+              2022幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -420,8 +420,8 @@
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               日期<br>
-              <!-- 💡 優化顯示：剛性縮減為 6 碼（026/06/06），騰出空間防止行動端溢出 -->
-              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">026/06/06</span>
+              <!-- 💡 優化顯示：剛性縮減為 6 碼（26/06/06），騰出空間防止行動端溢出 -->
+              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">26/06/06</span>
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               局次<br>
@@ -895,24 +895,6 @@
       
       return cleanName;
     }
- function maskDateTo8Digits(dateStr) {
-      if (!dateStr) return "26/06/08";
-      var clean = String(dateStr).trim();
-      
-      // 🟢 如果是標準的 10 碼（如 2026/06/08 或 0026/06/08），強制切掉前兩碼
-      if (clean.length === 10) {
-        return clean.substring(2); 
-      }
-      
-      // 🟢 防呆機制：如果因為手滑打成 2026-06-08 格式，順便幫裁判把橫線改成斜線
-      if (clean.includes("-")) {
-        clean = clean.replace(/-/g, "/");
-        if (clean.length === 10) return clean.substring(2);
-      }
-      
-      return clean;
-    }
-
 
 
     /**
@@ -1026,18 +1008,14 @@
     /**
      * 套用並建立本局
      */
-   function applyAndBuildRound() {
+    function applyAndBuildRound() {
       var setupRound = document.getElementById("setup-round-input").value || "1";
-      var setupDate = document.getElementById("setup-date-input").value || "2026/06/08";
+      var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
       
-      // 💡 實體攔截：在這裡直接呼叫剛貼進去的功能，切掉年份前兩碼
-      var displayDate = maskDateTo8Digits(setupDate);
-      
-      // 實體寫入前台吸頂大表常駐儲存格
-      document.getElementById("top-round-display").innerText = setupRound;
-      document.getElementById("top-date-display").innerText = displayDate;
-      
-      // (下方的選手姓名迴圈、重設分數迴圈、LocalStorage 快取等代碼 100% 照舊維持不變...)
+      // 若輸入為 2026/06/06 格式，自動縮減顯示成 026/06/06
+      var displayDate = setupDate;
+      if (displayDate.length === 10 && displayDate.startsWith("2")) {
+        displayDate = "0" + displayDate.substring(1);
       }
       
       // 寫入頂部狀態欄
@@ -1423,15 +1401,16 @@
     /**
      * 歷史紀錄資料包反向渲染還原引擎
      */
-function restoreTableFromHistoryPayload(data) {
+    function restoreTableFromHistoryPayload(data) {
       document.getElementById("top-table-display").innerText = "第 " + data.tableNum + " 桌";
       document.getElementById("top-round-display").innerText = data.gameRound;
       
-      // 💡 實體攔截：當快取或雲端還原對局時，強行將 data.date 送入新功能切掉前兩碼
-      document.getElementById("top-date-display").innerText = maskDateTo8Digits(data.date);
-
-      // (下方的四大方位選手 for 迴圈、簽名按鈕鎖定等代碼完全照舊維持不變)
-
+      // 💡 日期相容：若後端回傳 10 碼完整年份，自動在前端壓縮為 6 碼，騰出顯示空間
+      var displayDate = data.date;
+      if (displayDate.length === 10 && displayDate.startsWith("2")) {
+        displayDate = "0" + displayDate.substring(1);
+      }
+      document.getElementById("top-date-display").innerText = displayDate;
 
       var seats = ['A', 'B', 'C', 'D'];
       var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
