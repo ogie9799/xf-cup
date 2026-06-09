@@ -415,7 +415,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              幸福盃國標麻將2027隊制賽
+              2026幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -1279,7 +1279,7 @@
       const seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
       const curSeatName = seatNames[seat] || '選手';
       
-      // 💡 剛性維持單行平鋪，防止格子高度產生任何抽動破版
+      // 💡 剛性維持單行平鋪，防止格子高度產生 any 抽動破版
       btn.innerHTML = curSeatName + "<br>已確";
       btn.disabled = true; 
       
@@ -1554,9 +1554,11 @@
     // ========================================================= 
     window.addEventListener("DOMContentLoaded", function() {
       adjustMobileVh();
+      
+      // 💡 剛性修正：網頁加載完成時，鐵腕確保所有控制視窗初始關閉，釋放底層大表
       closeSetupModal();
       closeKeyboardModal();
-      closeRoundScoreModal();
+      closeRoundScoreModal(); 
       
       // 記憶機制激活：當裁判截圖外發群組回來時，優先自動調取先前操作的活躍桌號
       var activeTable = localStorage.getItem("xf_cup_active_table_num") || "1";
