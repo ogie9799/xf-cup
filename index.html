@@ -421,7 +421,7 @@
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               日期<br>
               <!-- 💡 優化顯示：剛性縮減為 6 碼（026/06/06），騰出空間防止行動端溢出 -->
-              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">026/06/06</span>
+              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">26/06/06</span>
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               局次<br>
@@ -903,9 +903,9 @@
     function openSetupModal() {
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
-      // 還原原始完整日期格式給輸入框（如果是 026 開頭則轉回 2026 供編輯）
+      // 還原原始完整日期格式給輸入框（如果是 26 開頭則轉回 2026 供編輯）
       var curDateDisplay = document.getElementById("top-date-display").innerText;
-      if (curDateDisplay.startsWith("026/")) {
+      if (curDateDisplay.startsWith("26/")) {
         curDateDisplay = "2026" + curDateDisplay.substring(3);
       }
       document.getElementById("setup-date-input").value = curDateDisplay;
@@ -1012,10 +1012,10 @@
       var setupRound = document.getElementById("setup-round-input").value || "1";
       var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
       
-      // 若輸入為 2026/06/06 格式，自動縮減顯示成 026/06/06
+      // 若輸入為 2026/06/06 格式，自動縮減顯示成 26/06/06
       var displayDate = setupDate;
       if (displayDate.length === 10 && displayDate.startsWith("2")) {
-        displayDate = "0" + displayDate.substring(1);
+        displayDate = "" + displayDate.substring(1);
       }
       
       // 寫入頂部狀態欄
@@ -1408,7 +1408,7 @@
       // 💡 日期相容：若後端回傳 10 碼完整年份，自動在前端壓縮為 6 碼，騰出顯示空間
       var displayDate = data.date;
       if (displayDate.length === 10 && displayDate.startsWith("2")) {
-        displayDate = "0" + displayDate.substring(1);
+        displayDate = "" + displayDate.substring(1);
       }
       document.getElementById("top-date-display").innerText = displayDate;
 
