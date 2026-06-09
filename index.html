@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2028幸福盃國標麻將隊制賽
+              2026幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -900,23 +900,26 @@
     /**
      * 賽事初始化設定彈窗控制項
      */
-    function openSetupModal() {
+      function openSetupModal() {
+      // 1. 還原局次
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
-      // 還原原始完整日期格式給輸入框（如果是 2026 開頭則轉回 2026 供編輯）
-      var curDateDisplay = document.getElementById("top-date-display").innerText;
-      if (curDateDisplay.startsWith("2026")) {
-        curDateDisplay = "2026" + curDateDisplay.substring(3);
-      }
+      // 2. 💡 徹底解決 66 問題：直接讀取純文字（innerText），完全不碰 innerHTML，保證不踩 replace 雷區
+      var curDateDisplay = document.getElementById("top-date-display").innerText.trim();
+      
+      // 💡 自動相容：如果畫面上已經是 8 碼純數字（如 20260607），原封不動塞回設定框供修改
       document.getElementById("setup-date-input").value = curDateDisplay;
       
+      // 3. 還原四家選手編號與姓名
       for (var i = 1; i <= 4; i++) {
         var noText = document.getElementById("main-p" + i + "-no").innerText;
-        // 還原姓名至設定框時，自動抹除換行符號以利閱讀與編輯
-        var nameText = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, "");
+        // 💡 徹底解決姓名框噴出 HTML 原始碼的 Bug：直接改採 .innerText 抓取純文字，100% 安全乾淨
+        var nameText = document.getElementById("main-p" + i + "-name").innerText;
+        
         document.getElementById("setup-p" + i + "-no").value = noText === "-" ? "" : noText;
-        document.getElementById("setup-p" + i + "-name").value = nameText === "-" ? "" : nameText;
+        document.getElementById("setup-p" + i + "-name").value = (nameText === "-" || nameText === "(自動姓名)") ? "" : nameText;
       }
+      
       document.getElementById("modal-setup").style.display = "flex";
     }
     
