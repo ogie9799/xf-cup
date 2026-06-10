@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026幸福盃國標麻將隊制賽
+              2029幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -420,8 +420,8 @@
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               日期<br>
-              <!-- 💡 優化顯示：剛性縮減為 6 碼（20260606），騰出空間防止行動端溢出 -->
-              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">20260606</span>
+              <!-- 💡 優化顯示：剛性縮減為 6 碼（026/06/06），騰出空間防止行動端溢出 -->
+              <span id="top-date-display" style="font-size: 11px; color: #1e3a8a; font-weight: bold; display: block; white-space: nowrap;">026/06/06</span>
             </td>
             <td style="font-size: 11px; font-weight: bold; padding: 0; margin: 0; background-color: #f8fafc; height: 44px; text-align: center; color: #1e3a8a; line-height: 1.3; border: 1px solid #cbd5e1; vertical-align: middle;">
               局次<br>
@@ -612,7 +612,7 @@
           </div>
           <div class="meta-item">
             <label for="setup-date-input" style="font-size: 13px;">變更日期</label>
-            <input type="text" id="setup-date-input" class="input-meta-field" value="20260606" placeholder="YYYYMMDD" style="border-radius: 0; height: 38px;">
+            <input type="text" id="setup-date-input" class="input-meta-field" value="2026/06/06" placeholder="YYYY/MM/DD" style="border-radius: 0; height: 38px;">
           </div>
         </div>
         
@@ -900,26 +900,23 @@
     /**
      * 賽事初始化設定彈窗控制項
      */
-      function openSetupModal() {
-      // 1. 還原局次
+    function openSetupModal() {
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
-      // 2. 💡 徹底解決 66 問題：直接讀取純文字（innerText），完全不碰 innerHTML，保證不踩 replace 雷區
-      var curDateDisplay = document.getElementById("top-date-display").innerText.trim();
-      
-      // 💡 自動相容：如果畫面上已經是 8 碼純數字（如 20260607），原封不動塞回設定框供修改
+      // 還原原始完整日期格式給輸入框（如果是 026 開頭則轉回 2026 供編輯）
+      var curDateDisplay = document.getElementById("top-date-display").innerText;
+      if (curDateDisplay.startsWith("026/")) {
+        curDateDisplay = "2026" + curDateDisplay.substring(3);
+      }
       document.getElementById("setup-date-input").value = curDateDisplay;
       
-      // 3. 還原四家選手編號與姓名
       for (var i = 1; i <= 4; i++) {
         var noText = document.getElementById("main-p" + i + "-no").innerText;
-        // 💡 徹底解決姓名框噴出 HTML 原始碼的 Bug：直接改採 .innerText 抓取純文字，100% 安全乾淨
-        var nameText = document.getElementById("main-p" + i + "-name").innerText;
-        
+        // 還原姓名至設定框時，自動抹除換行符號以利閱讀與編輯
+        var nameText = document.getElementById("main-p" + i + "-name").innerHTML.replace(/<br>/g, "");
         document.getElementById("setup-p" + i + "-no").value = noText === "-" ? "" : noText;
-        document.getElementById("setup-p" + i + "-name").value = (nameText === "-" || nameText === "(自動姓名)") ? "" : nameText;
+        document.getElementById("setup-p" + i + "-name").value = nameText === "-" ? "" : nameText;
       }
-      
       document.getElementById("modal-setup").style.display = "flex";
     }
     
@@ -1011,22 +1008,17 @@
     /**
      * 套用並建立本局
      */
-     function applyAndBuildRound() {
+    function applyAndBuildRound() {
       var setupRound = document.getElementById("setup-round-input").value || "1";
-      var setupDate = document.getElementById("setup-date-input").value || "20260607";
+      var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
       
-      // 💡 剛性鐵壁防線：清洗拔除所有斜線 / 與橫線 -
-      var displayDate = maskDateTo8Digits(setupDate);
-      
-      // 💡 終極靶向熔斷鎖：如果字串長度大於 8 碼（例如因為舊快取殘留變成 202660607 共有 9 碼）
-      // 強制將其攔截並硬性校正回復原廠標準的 "20260607"，徹底封死 66 的重組陰影！
-      if (displayDate.length > 8) {
-        displayDate = displayDate.substring(0, 4) + displayDate.substring(displayDate.length - 4);
-        // 如果手滑打更長，直接強制熔斷還原為標準 20260607
-        if (displayDate.length !== 8) displayDate = "20260607";
+      // 若輸入為 2026/06/06 格式，自動縮減顯示成 026/06/06
+      var displayDate = setupDate;
+      if (displayDate.length === 10 && displayDate.startsWith("2")) {
+        displayDate = "0" + displayDate.substring(1);
       }
       
-      // 實體寫入頂部常駐大表
+      // 寫入頂部狀態欄
       document.getElementById("top-round-display").innerText = setupRound;
       document.getElementById("top-date-display").innerText = displayDate;
       
@@ -1479,7 +1471,7 @@
         tableNum: tableNum,
         gameRound: document.getElementById("top-round-display").innerText,
         // 防禦機制：若設定框不存在則預設帶入大賽日
-        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value : "20260606",
+        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value : "2026/06/06",
         players: {}
       };
 
