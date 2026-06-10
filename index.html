@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2041幸福盃國標麻將隊制賽
+              2043幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -618,29 +618,33 @@
         
         <!-- 東南西北四家座位卡片排版 -->
         <div class="seat-setup-group">
-          <!-- 東家卡片 -->
-          <div class="seat-card" style="border-radius: 0; padding: 10px;">
-            <div class="seat-label east" style="font-size: 14px;">東家 (A)</div>
-            <input type="text" id="setup-p1-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(1)">
-            <input type="text" id="setup-p1-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
-          </div>
-          <!-- 南家卡片 -->
-          <div class="seat-card" style="border-radius: 0; padding: 10px;">
-            <div class="seat-label south" style="font-size: 14px;">南家 (B)</div>
-            <input type="text" id="setup-p2-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(2)">
-            <input type="text" id="setup-p2-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
-          </div>
-          <!-- 西家卡片 -->
-          <div class="seat-card" style="border-radius: 0; padding: 10px;">
-            <div class="seat-label west" style="font-size: 14px;">西家 (C)</div>
-            <input type="text" id="setup-p3-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(3)">
-            <input type="text" id="setup-p3-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
-          </div>
-          <!-- 北家卡片 -->
-          <div class="seat-card" style="border-radius: 0; padding: 10px;">
-            <div class="seat-label north" style="font-size: 14px;">北家 (D)</div>
-            <input type="text" id="setup-p4-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(4)">
-            <input type="text" id="setup-p4-name" class="output-player-name" placeholder="(自動姓名)" readonly style="border-radius: 0; height: 36px;">
+         <!-- 1. 東家卡片修改後 -->
+<div class="seat-card" style="border-radius: 0; padding: 10px;">
+  <div class="seat-label east" style="font-size: 14px;">東家 (A)</div>
+  <input type="text" id="setup-p1-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(1)">
+  <!-- 💡 核心解耦：移除 readonly，新增 oninput -->
+  <input type="text" id="setup-p1-name" class="output-player-name" placeholder="(手動輸入或自動姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameManualInput(1)">
+</div>
+
+<!-- 2. 南家卡片修改後 -->
+<div class="seat-card" style="border-radius: 0; padding: 10px;">
+  <div class="seat-label south" style="font-size: 14px;">南家 (B)</div>
+  <input type="text" id="setup-p2-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(2)">
+  <input type="text" id="setup-p2-name" class="output-player-name" placeholder="(手動輸入或自動姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameManualInput(2)">
+</div>
+
+<!-- 3. 西家卡片修改後 -->
+<div class="seat-card" style="border-radius: 0; padding: 10px;">
+  <div class="seat-label west" style="font-size: 14px;">西家 (C)</div>
+  <input type="text" id="setup-p3-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(3)">
+  <input type="text" id="setup-p3-name" class="output-player-name" placeholder="(手動輸入或自動姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameManualInput(3)">
+</div>
+
+<!-- 4. 北家卡片修改後 -->
+<div class="seat-card" style="border-radius: 0; padding: 10px;">
+  <div class="seat-label north" style="font-size: 14px;">北家 (D)</div>
+  <input type="text" id="setup-p4-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(4)">
+  <input type="text" id="setup-p4-name" class="output-player-name" placeholder="(手動輸入或自動姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameManualInput(4)">
           </div>
         </div>
       </div>
@@ -829,39 +833,53 @@
       var noValue = document.getElementById("setup-p" + seatIndex + "-no").value.trim();
       var nameField = document.getElementById("setup-p" + seatIndex + "-name");
       
-      // 每次輸入變更立刻更新戳記，作廢所有先前的非同步回傳，根除閃現問題
       var queryId = Date.now() + "_" + Math.random();
       activeQueries[seatIndex] = queryId;
 
+      // 💡 雙通道核心優化：如果選手把編號刪除了（私下練習模式），「絕對不清空姓名」，讓手動輸入的姓名留著
       if (!noValue) {
-        nameField.value = "";
         return;
       }
       
-      // 前端快取命中判定：秒出結果
+      // 檢查快取
       if (playerDatabaseCache[noValue]) {
         nameField.value = playerDatabaseCache[noValue];
         return;
       }
       
-      // 正在進行全新查詢，顯示查詢中
       nameField.value = "查詢中...";
       
-      // 呼叫 Fetch 跨網域通訊網關
+      // 呼叫 Fetch 跨網域通訊
       callBackendAPI("getPlayerName", { noValue: noValue }, function(res) {
-        // 靶向安全閥開關驗證：只有當此次回傳時的 ID 與最新戳記完全吻合，才准寫入！
         if (activeQueries[seatIndex] !== queryId) return; 
         
         if (res && res.name) {
           nameField.value = res.name;
           playerDatabaseCache[noValue] = res.name;
         } else {
+          // 💡 雙通道優化：若查無此人，僅提示1秒後自動恢復空白，不干擾練習模式手動打字
           nameField.value = "查無此選手";
+          setTimeout(function() {
+            if (document.getElementById("setup-p" + seatIndex + "-no").value.trim() === noValue && nameField.value === "查無此選手") {
+              nameField.value = "";
+              nameField.placeholder = "請手動輸入姓名";
+            }
+          }, 1200);
         }
       }, function() {
         if (activeQueries[seatIndex] !== queryId) return;
         nameField.value = "連線失敗";
       });
+    }
+
+    /**
+     * 💡 新增防護：當選手私下練習、手動輸入姓名時，自動移除輸入框可能殘留的提示文字
+     */
+    function handlePlayerNameManualInput(seatIndex) {
+      var nameField = document.getElementById("setup-p" + seatIndex + "-name");
+      if (nameField.value === "查詢中..." || nameField.value === "查無此選手" || nameField.value === "連線失敗") {
+        nameField.value = "";
+      }
     }
     /* ========================================================= */
     /* 第 13 部分：彈窗與鍵盤交互控制及姓名 2x2 動態格式化腳本        */
