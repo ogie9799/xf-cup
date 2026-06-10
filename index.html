@@ -407,7 +407,7 @@
           <!-- 大會官方滿版大標題列 -->
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2028幸福盃國標麻將隊制賽
+              2030幸福盃國標麻將隊制賽
             </th>
           </tr>
           
@@ -612,7 +612,7 @@
           </div>
           <div class="meta-item">
             <label for="setup-date-input" style="font-size: 13px;">變更日期</label>
-            <input type="text" id="setup-date-input" class="input-meta-field" value="20260606" placeholder="YYYYMMDD" style="border-radius: 0; height: 38px;">
+            <input type="text" id="setup-date-input" class="input-meta-field" value="2026/06/06" placeholder="YYYY/MM/DD" style="border-radius: 0; height: 38px;">
           </div>
         </div>
         
@@ -1406,11 +1406,13 @@
       document.getElementById("top-round-display").innerText = data.gameRound;
       
       // 💡 日期相容：若後端回傳 10 碼完整年份，自動在前端壓縮為 6 碼，騰出顯示空間
-      var displayDate = data.date;
-      if (displayDate.length === 10 && displayDate.startsWith("2")) {
-        displayDate = "0" + displayDate.substring(1);
-      }
-      document.getElementById("top-date-display").innerText = displayDate;
+   var payload = {
+        tableNum: tableNum,
+        gameRound: document.getElementById("top-round-display").innerText,
+        // 防禦機制：若設定框不存在則預設帶入大賽日
+        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value : "2026/06/06",
+        players: {}
+      };
 
       var seats = ['A', 'B', 'C', 'D'];
       var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
@@ -1467,11 +1469,11 @@
       // 💡 核心防禦：牢牢記住目前操作的活躍桌號，防止記分員截圖跳出回來後大表變回第1桌
       localStorage.setItem("xf_cup_active_table_num", tableNum);
       
-      var payload = {
+         var payload = {
         tableNum: tableNum,
         gameRound: document.getElementById("top-round-display").innerText,
-        // 防禦機制：若設定框不存在則預設帶入大賽日
-        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value : "2026/06/06",
+        // 💡 鋼骨校正：本地落地快取之日期欄位同步硬核錨定為 8 碼格式
+        date: document.getElementById("setup-date-input") ? document.getElementById("setup-date-input").value.replace(/\//g, '') : "20260606",
         players: {}
       };
 
