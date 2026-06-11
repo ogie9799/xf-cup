@@ -392,7 +392,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026幸福盃國標麻將隊制賽
+              2026福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -1571,17 +1571,50 @@
       });
     }
 
-    /**
-     * 💡 前端修正完全體：歷史紀錄資料包反向渲染還原引擎
-     * 說明：徹底重新設計解碼結構，100% 將後端盲撈的 1~16 盤細節、編號、總分、標準分精準對齊填入大表格！
+      /**
+     * 💡 歷史紀錄資料包反向渲染還原引擎（💡 終極修正：純 8 碼 YYYYMMDD 工整防擋版）
      */
     function restoreTableFromHistoryPayload(data) {
       document.getElementById("top-table-display").innerText = "第 " + data.tableNum + " 桌";
       document.getElementById("top-round-display").innerText = data.gameRound;
-      document.getElementById("top-date-display").innerText = data.date;
+      
+      // 1. 安全撈取後端寫入的時間戳記字串
+      var rawDateStr = data.date ? data.date.toString().trim() : "2026/06/06";
+      var final8DigitDate = "20260606"; // 預設安全防線
+      
+      // 🟢 狀況一：如果是帶有斜線的標準字串 (如 2026/06/11 15:22:01)
+      if (rawDateStr.includes("/")) {
+        // 提取前 10 碼 "2026/06/11"，並硬核拔除所有斜線 "/"
+        var tempDate = rawDateStr.substring(0, 10);
+        final8DigitDate = tempDate.replace(/\//g, ""); // 完美轉化為 "20260611"
+      } 
+      // 🟢 狀況二：如果是美東時間或長串非標準格式 (如 Thu Jun 11 2026...)
+      else if (rawDateStr.includes(" ") || isNaN(rawDateStr)) {
+        var dateObj = new Date(rawDateStr);
+        if (!isNaN(dateObj.getTime())) {
+          var yyyy = dateObj.getFullYear();
+          var mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+          var dd = String(dateObj.getDate()).padStart(2, '0');
+          final8DigitDate = yyyy.toString() + mm + dd; // 剛性熔接成 "20260611"
+        }
+      } 
+      // 🟢 狀況三：如果本來就是乾淨的純數字，過濾非數字字元後直接保留
+      else {
+        final8DigitDate = rawDateStr.replace(/[^0-9]/g, "");
+      }
+      
+      // 💡 大賽防禦：確保剛好 8 碼，防止後台萬一帶有其他殘留字元
+      if (final8DigitDate.length > 8) {
+        final8DigitDate = final8DigitDate.substring(0, 8);
+      }
+      
+      // 2. 實體將絕對工整、毫無爭議的 8 碼數字寫回狀態列
+      document.getElementById("top-date-display").innerText = final8DigitDate;
 
+      // --- 以下原本完好的四家方位與 1~16 盤還原迴圈請 100% 保持不動 ---
       var seats = ['A', 'B', 'C', 'D'];
       var seatNames = { 'A': '東家', 'B': '南家', 'C': '西家', 'D': '北家' };
+
 
       for (var i = 1; i <= 4; i++) {
         var seatKey = seats[i-1];
@@ -1755,8 +1788,8 @@
       if (mainContainer) mainContainer.style.height = "calc(var(--vh, 1vh) * 100)";
     }
 
-    // ========================================================= 
-    // 全域初始化監聽與自動加載安全防線啟動 
+     // ========================================================= 
+    // 全域初始化監聽與自動加載安全防線啟動（💡 修正：預設第 0 桌防呆版）
     // ========================================================= 
     window.addEventListener("DOMContentLoaded", function() {
       adjustMobileVh();
@@ -1764,14 +1797,21 @@
       closeKeyboardModal();
       closeRoundScoreModal();
       
-      var activeTable = localStorage.getItem("xf_cup_active_table_num") || "1";
+      // 💡 剛性修正防呆：初次加載或沒有活躍快取時，大表一律強制預設顯示為「第 0 桌」
+      // 這會強迫記分員一進來就看到 0 桌，進而驚覺並點選「變更」改為正確桌次！
+      var activeTable = localStorage.getItem("xf_cup_active_table_num") || "0";
       document.getElementById("top-table-display").innerText = "第 " + activeTable + " 桌";
       
-      var restored = loadTableFromLocalStorage();
-      if (!restored) {
-        calculateTotals(); 
+      // 💡 快取讀取：如果 activeTable 是 0 桌，代表是初始狀態，不進行任何錯誤快取載入，保持清爽
+      if (activeTable !== "0") {
+        var restored = loadTableFromLocalStorage();
+        if (!restored) {
+          calculateTotals(); 
+        }
+      } else {
+        calculateTotals();
       }
-      console.log("國標麻將幸福盃控台 - V5 終極完全體決戰修復版滿血落成");
+      console.log("國標麻將幸福盃控台 - V5.2 覆蓋更新防呆版完全體落成");
     });
     window.addEventListener("resize", adjustMobileVh);
   </script>
