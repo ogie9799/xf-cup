@@ -392,7 +392,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2070幸福盃國標麻將隊制賽
+              2074幸福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -563,10 +563,8 @@
     </div>
   </div>
   <!-- ========================================================= -->
-  <!-- 第 10 部分：賽事初始化設定與大會最高策略宣示彈窗 HTML         -->
+  <!-- 第 10 部分：賽事初始化設定彈窗 HTML（💡 閉合鋼骨完美校正版）    -->
   <!-- ========================================================= -->
-  
-  <!-- 1. 賽事初始化設定彈窗 -->
   <div id="modal-setup" class="custom-modal-overlay" style="display: none;">
     <div class="modal-content-box" style="border: 3px solid #1e3a8a; border-radius: 0;">
       <div class="modal-header" style="background-color: #1e3a8a; color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 16px;">
@@ -590,31 +588,35 @@
           <div class="seat-card" style="border-radius: 0; padding: 10px;">
             <div class="seat-label east" style="font-size: 14px;">東家 (A)</div>
             <input type="text" id="setup-p1-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(1)">
-            <input type="text" id="setup-p1-name" class="output-player-name" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(1)">
+            <input type="text" id="setup-p1-name" class="output-player-name" list="list-p1" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(1)">
+            <datalist id="list-p1"></datalist>
           </div>
 
           <!-- 2. 南家卡片 -->
           <div class="seat-card" style="border-radius: 0; padding: 10px;">
             <div class="seat-label south" style="font-size: 14px;">南家 (B)</div>
             <input type="text" id="setup-p2-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(2)">
-            <input type="text" id="setup-p2-name" class="output-player-name" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(2)">
+            <input type="text" id="setup-p2-name" class="output-player-name" list="list-p2" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(2)">
+            <datalist id="list-p2"></datalist>
           </div>
 
           <!-- 3. 西家卡片 -->
           <div class="seat-card" style="border-radius: 0; padding: 10px;">
             <div class="seat-label west" style="font-size: 14px;">西家 (C)</div>
             <input type="text" id="setup-p3-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(3)">
-            <input type="text" id="setup-p3-name" class="output-player-name" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(3)">
+            <input type="text" id="setup-p3-name" class="output-player-name" list="list-p3" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(3)">
+            <datalist id="list-p3"></datalist>
           </div>
 
           <!-- 4. 北家卡片 -->
           <div class="seat-card" style="border-radius: 0; padding: 10px;">
             <div class="seat-label north" style="font-size: 14px;">北家 (D)</div>
             <input type="text" id="setup-p4-no" class="input-player-no" placeholder="選手編號" style="border-radius: 0; height: 36px;" oninput="handlePlayerNoInput(4)">
-            <input type="text" id="setup-p4-name" class="output-player-name" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(4)">
+            <input type="text" id="setup-p4-name" class="output-player-name" list="list-p4" placeholder="(姓名)" style="border-radius: 0; height: 36px; background-color: #ffffff; color: #1e293b;" oninput="handlePlayerNameInput(4)">
+            <datalist id="list-p4"></datalist>
           </div>
-        </div>
-      </div>
+        </div> <!-- 結束 seat-setup-group -->
+      </div> <!-- 結束 modal-body-scroll -->
       
       <!-- 初始化彈窗底部控制鈕 -->
       <div style="display: flex; gap: 0; padding: 0; background-color: #f1f5f9; box-sizing: border-box;">
@@ -625,8 +627,9 @@
           套用並建立本局
         </button>
       </div>
-    </div>
-  </div>
+    </div> <!-- 結束 modal-content-box -->
+  </div> <!-- 結束 modal-setup (💡 外部全域遮罩層完美閉合) -->
+
   <!-- 2. 大會最高策略宣示看板彈窗 -->
   <div id="modal-strategy" class="custom-modal-overlay" style="display: none;">
     <div class="modal-content-box" style="border: 3px solid #ea580c; border-radius: 0; max-width: 295px;">
@@ -786,35 +789,58 @@
     }
 
     /**
-     * 💡 修正完全體：監聽選手姓名輸入，反向自動帶出比賽編號
-     * 說明：洗淨 HTML 標籤後精準碰撞後端資料庫，查無選手時相容盲打
+     * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
      */
     function handlePlayerNameInput(seatIndex) {
       var nameValue = document.getElementById("setup-p" + seatIndex + "-name").value.trim();
       var noField = document.getElementById("setup-p" + seatIndex + "-no");
+      var dataList = document.getElementById("list-p" + seatIndex); // 抓取隱形清單箱子
       
       var queryId = Date.now() + "_" + Math.random();
       activeQueries["name_" + seatIndex] = queryId;
 
       if (!nameValue) {
+        if (dataList) dataList.innerHTML = ""; // 清空選單
         return;
       }
       
+      // 💡 核心聯動防呆：如果使用者剛好輸入了完整的全名（完全命中快取），秒出編號並清空下拉選單
       if (playerNameDatabaseCache[nameValue]) {
         noField.value = playerNameDatabaseCache[nameValue];
+        if (dataList) dataList.innerHTML = ""; 
         return;
       }
-      
-      noField.placeholder = "反查中...";
       
       callBackendAPI("getPlayerNo", { nameValue: nameValue }, function(res) {
         if (activeQueries["name_" + seatIndex] !== queryId) return; 
         
-        if (res && res.success && res.no) {
-          noField.value = res.no;
-          noField.placeholder = "選手編號";
-          playerNameDatabaseCache[nameValue] = res.no;
-          playerDatabaseCache[res.no] = nameValue;
+        if (dataList) dataList.innerHTML = ""; // 先清空舊的條列選項
+        
+        if (res && res.success) {
+          if (res.isList && res.list && res.list.length > 0) {
+            
+            // 💡 狀況一：後端吐回了多筆符合條件的模糊清單，動態渲染成 `<option>` 塞入下拉選單
+            res.list.forEach(function(player) {
+              var option = document.createElement("option");
+              // value 設為全名，label 顯示編號，這樣點選時會自動將全名填入姓名框
+              option.value = player.name;
+              option.label = "[" + player.no + "]";
+              dataList.appendChild(option);
+              
+              // 順手偷偷存入臨時快取，供點選時能秒對接編號
+              playerNameDatabaseCache[player.name] = player.no;
+              playerDatabaseCache[player.no] = player.name;
+            });
+            
+            // 💡 智慧聯動：如果模糊搜尋結果「剛好只有 1 個人符合」，不讓裁判多選，直接幫他把編號填進去！
+            if (res.list.length === 1) {
+              noField.value = res.list[0].no;
+              noField.placeholder = "選手編號";
+            } else {
+              noField.placeholder = "請由清單點選...";
+            }
+            
+          }
         } else {
           noField.placeholder = "無官方編號";
         }
