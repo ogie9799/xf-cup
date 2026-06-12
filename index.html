@@ -74,6 +74,13 @@
       align-items: center;
       z-index: 9999;
     }
+ /* 🚀 幸福盃行動端 App 捷徑防微縮放大晶片 */
+    #modal-strategy .modal-content-box {
+      transform: scale(1.2) !important;
+      transform-origin: center center !important;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+    }
+
 
     /* 獨立大數字鍵盤排版 */
     .keyboard-box {
@@ -392,7 +399,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026幸福盃國標麻將隊制賽
+              202615幸福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -1046,16 +1053,16 @@
         var innerBox = document.querySelector("#modal-strategy .modal-content-box") || document.getElementById("modal-strategy");
         if (innerBox) {
           innerBox.style.border = "3px solid #ea580c";
-          innerBox.style.maxWidth = "360px";
+          innerBox.style.setProperty("max-width", "395px", "important");
           innerBox.innerHTML = dynamicHtml;
         }
       }, 10);
     }
 
 
-       /**
-     * 內部核心輔助函式 B：動態生成 HTML 內層雙表模板 (V10.0.5 世紀竣工完全體)
-     * 💡 幸福盃終極竣工：就地自我解封隱藏彈窗，100% 解決無法返回大表問題，怒奪 100 分！
+   /**
+     * 內部核心輔助函式 B：動態生成 HTML 內層雙表模板 (V10.1 App捷徑全螢幕放大優化版)
+     * 💡 幸福盃終極優化：寬度加寬至 96%，字體放大連動，完美適配無網址列的 App 獨立運作模式！
      */
     function generateInnerStrategyTablesHtml(data, tableNum) {
       var renderMatrixRows = function(constant) {
@@ -1077,69 +1084,69 @@
 
         if (players.length < 4) return '<tr><td colspan="6">資料加載中...</td></tr>';
 
-        // 🌟 亞軍 ➡️ 追冠軍
-        var p1 = players[1];
-        var d1 = players[0];
+        // 🌟 亞軍 ➡️ 追冠軍 (字體微放大至 13px)
+        var p1 = players;
+        var d1 = players;
         var diff1 = d1.score - p1.score;
-        htmlBuffer += '<tr style="color: white; height: 18px;">' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; font-weight: bold; background-color: #2a2a2a;">' + p1.name + '</td>' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #FFF2CC;">' + d1.name + '</td>' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #999;">' + diff1 + '</td>' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; color: #FF4D4D; font-weight: bold;">' + calcFan(diff1, constant, 4) + '</td>' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; color: #FFAA00; font-weight: bold;">' + calcFan(diff1, constant, 2) + '</td>' +
-                      '<td style="border: 1px solid #444; padding: 2px 1px; color: #2ECC71; font-weight: bold;">' + calcFan(diff1, constant, 1) + '</td>' +
+        htmlBuffer += '<tr style="color: white; height: 22px;">' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; font-weight: bold; background-color: #2a2a2a;">' + p1.name + '</td>' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #FFF2CC;">' + d1.name + '</td>' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #aaa;">' + diff1 + '</td>' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; color: #FF4D4D; font-weight: bold; font-size: 14px;">' + calcFan(diff1, constant, 4) + '</td>' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; color: #FFAA00; font-weight: bold; font-size: 14px;">' + calcFan(diff1, constant, 2) + '</td>' +
+                      '<td style="border: 1px solid #444; padding: 4px 2px; color: #2ECC71; font-weight: bold; font-size: 14px;">' + calcFan(diff1, constant, 1) + '</td>' +
                       '</tr>';
 
         // 🌟 季軍 ➡️ 追冠軍、追亞軍
-        var p2 = players[2];
+        var p2 = players;
         for (var j = 0; j <= 1; j++) {
           var d2 = players[j];
           var diff2 = d2.score - p2.score;
-          htmlBuffer += '<tr style="color: white; height: 18px;">';
+          htmlBuffer += '<tr style="color: white; height: 22px;">';
           if (j === 0) {
-            htmlBuffer += '<td rowspan="2" style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; font-weight: bold; background-color: #2a2a2a;">' + p2.name + '</td>';
+            htmlBuffer += '<td rowspan="2" style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; font-weight: bold; background-color: #2a2a2a;">' + p2.name + '</td>';
           }
-          htmlBuffer += '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #FFF2CC;">' + d2.name + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #999;">' + diff2 + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #FF4D4D; font-weight: bold;">' + calcFan(diff2, constant, 4) + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #FFAA00; font-weight: bold;">' + calcFan(diff2, constant, 2) + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #2ECC71; font-weight: bold;">' + calcFan(diff2, constant, 1) + '</td>' +
+          htmlBuffer += '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #FFF2CC;">' + d2.name + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #aaa;">' + diff2 + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #FF4D4D; font-weight: bold; font-size: 14px;">' + calcFan(diff2, constant, 4) + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #FFAA00; font-weight: bold; font-size: 14px;">' + calcFan(diff2, constant, 2) + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #2ECC71; font-weight: bold; font-size: 14px;">' + calcFan(diff2, constant, 1) + '</td>' +
                         '</tr>';
         }
 
         // 🌟 殿軍 ➡️ 追冠軍、追亞軍、追季軍
-        var p3 = players[3];
+        var p3 = players;
         for (var k = 0; k <= 2; k++) {
           var d3 = players[k];
           var diff3 = d3.score - p3.score;
-          htmlBuffer += '<tr style="color: white; height: 18px;">';
+          htmlBuffer += '<tr style="color: white; height: 22px;">';
           if (k === 0) {
-            htmlBuffer += '<td rowspan="3" style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; font-weight: bold; background-color: #2a2a2a;">' + p3.name + '</td>';
+            htmlBuffer += '<td rowspan="3" style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; font-weight: bold; background-color: #2a2a2a;">' + p3.name + '</td>';
           }
-          htmlBuffer += '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #FFF2CC;">' + d3.name + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 11px; color: #999;">' + diff3 + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #FF4D4D; font-weight: bold;">' + calcFan(diff3, constant, 4) + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #FFAA00; font-weight: bold;">' + calcFan(diff3, constant, 2) + '</td>' +
-                        '<td style="border: 1px solid #444; padding: 2px 1px; color: #2ECC71; font-weight: bold;">' + calcFan(diff3, constant, 1) + '</td>' +
+          htmlBuffer += '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #FFF2CC;">' + d3.name + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 13px; color: #aaa;">' + diff3 + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #FF4D4D; font-weight: bold; font-size: 14px;">' + calcFan(diff3, constant, 4) + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #FFAA00; font-weight: bold; font-size: 14px;">' + calcFan(diff3, constant, 2) + '</td>' +
+                        '<td style="border: 1px solid #444; padding: 4px 2px; color: #2ECC71; font-weight: bold; font-size: 14px;">' + calcFan(diff3, constant, 1) + '</td>' +
                         '</tr>';
         }
 
         return htmlBuffer;
       };
 
-      // 🚀 關鍵就地解封：按鈕 onclick 改為直接操作 DOM 元素隱藏，繞過一切函式權限阻礙！
-      return '<div style="background-color: #1A1A1A; color: white; padding: 8px; font-family: sans-serif; text-align: center; border-radius: 6px; width: 100%; box-sizing: border-box; font-size: 11px;">' +
-             '<h2 style="color: #FF6600; margin-top: 0; margin-bottom: 6px; font-size: 13px; letter-spacing: 0.5px; font-weight: bold;">幸福盃第 ' + tableNum + ' 桌 ─ 局局逆轉策略</h2>' +
+      // 🚀 視覺優化外殼：內距增強至 12px，寬度 100% 飽滿，字體全面升級至 13px
+      return '<div style="background-color: #1A1A1A; color: white; padding: 12px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box; font-size: 13px;">' +
+             '<h2 style="color: #FF6600; margin-top: 0; margin-bottom: 10px; font-size: 16px; letter-spacing: 0.5px; font-weight: bold;">幸福盃第 ' + tableNum + ' 桌 ─ 局局逆轉策略</h2>' +
              
              '<!-- 表格 1：超越策略表 -->' +
-             '<div style="margin-bottom: 8px;">' +
-             '<table style="width: 100%; border-collapse: collapse; background-color: #262626; border: 1.5px solid #FF6600; table-layout: fixed;">' +
-             '<colgroup><col style="width:20%"><col style="width:20%"><col style="width:14%"><col style="width:15%"><col style="width:15%"><col style="width:16%"></colgroup>' +
+             '<div style="margin-bottom: 12px;">' +
+             '<table style="width: 100%; border-collapse: collapse; background-color: #262626; border: 2px solid #FF6600; table-layout: fixed;">' +
+             '<colgroup><col style="width:21%"><col style="width:21%"><col style="width:13%"><col style="width:15%"><col style="width:15%"><col style="width:15%"></colgroup>' +
              '<thead>' +
-             '<tr style="background-color: #FF6600; color: white; height: 18px;">' +
-             '<th colspan="6" style="padding: 2px; font-size: 11px; font-weight: bold;">🏆【 超越策略表 (常數 -31) 】</th>' +
+             '<tr style="background-color: #FF6600; color: white; height: 22px;">' +
+             '<th colspan="6" style="padding: 4px; font-size: 13px; font-weight: bold;">🏆【 超越策略表 (常數 -31) 】</th>' +
              '</tr>' +
-             '<tr style="background-color: #333; font-size: 10px; color: #BBB; height: 16px;">' +
+             '<tr style="background-color: #333; font-size: 11px; color: #BBB; height: 18px;">' +
              '<th style="padding: 2px 1px; border: 1px solid #444;">挑戰者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFF2CC;">衛冕者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444;">分差</th>' +
@@ -1153,14 +1160,14 @@
              '</div>' +
 
              '<!-- 表格 2：追平策略表 -->' +
-             '<div style="margin-bottom: 6px;">' +
-             '<table style="width: 100%; border-collapse: collapse; background-color: #262626; border: 1.5px solid #0088CC; table-layout: fixed;">' +
-             '<colgroup><col style="width:20%"><col style="width:20%"><col style="width:14%"><col style="width:15%"><col style="width:15%"><col style="width:16%"></colgroup>' +
+             '<div style="margin-bottom: 12px;">' +
+             '<table style="width: 100%; border-collapse: collapse; background-color: #262626; border: 2px solid #0088CC; table-layout: fixed;">' +
+             '<colgroup><col style="width:21%"><col style="width:21%"><col style="width:13%"><col style="width:15%"><col style="width:15%"><col style="width:15%"></colgroup>' +
              '<thead>' +
-             '<tr style="background-color: #0088CC; color: white; height: 18px;">' +
-             '<th colspan="6" style="padding: 2px; font-size: 11px; font-weight: bold;">🤝【 追平策略表 (常數 -32) 】</th>' +
+             '<tr style="background-color: #0088CC; color: white; height: 22px;">' +
+             '<th colspan="6" style="padding: 4px; font-size: 13px; font-weight: bold;">🤝【 追平策略表 (常數 -32) 】</th>' +
              '</tr>' +
-             '<tr style="background-color: #333; font-size: 10px; color: #BBB; height: 16px;">' +
+             '<tr style="background-color: #333; font-size: 11px; color: #BBB; height: 18px;">' +
              '<th style="padding: 2px 1px; border: 1px solid #444;">挑戰者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFF2CC;">衛冕者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444;">分差</th>' +
@@ -1173,9 +1180,8 @@
              '</table>' +
              '</div>' +
 
-             // 🌟 終極修正：直接使用原生 JS 操作 style 隱藏，100% 成功關閉！
              '<button onclick="document.getElementById(\'modal-strategy\').style.display=\'none\';" ' +
-             'style="margin-top: 2px; background-color: #ea580c; color: white; border: none; padding: 4px; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; height: 28px;">' +
+             'style="margin-top: 6px; background-color: #ea580c; color: white; border: none; padding: 6px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 100%; height: 36px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">' +
              '確認返回大表' +
              '</button>' +
              '</div>';
