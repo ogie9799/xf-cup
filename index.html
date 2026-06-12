@@ -399,7 +399,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              202626幸福盃國標麻將隊制賽
+              202627幸福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -1048,13 +1048,17 @@
       // 6. 生成要塞入彈窗的雙表 HTML 內容
       var dynamicHtml = generateInnerStrategyTablesHtml(strategyData, currentTable);
 
-      // 7. 強力注入
+       // 7. 強力注入 (V17.0 App全螢幕大字適配版)
       setTimeout(function() {
         var innerBox = document.querySelector("#modal-strategy .modal-content-box") || document.getElementById("modal-strategy");
         if (innerBox) {
           innerBox.style.border = "3px solid #ea580c";
-          innerBox.style.setProperty("max-width", "395px", "important");
-          innerBox.innerHTML = dynamicHtml;
+          
+          // 🚀 關鍵解鎖：利用 vw (視窗寬度百分比) 代替 px 與固定 94%，
+          // 配合 CSS 的 scale 放大晶片，在 App 捷徑下直接把左右與字體強行撐大！
+          innerBox.style.setProperty("max-width", "82vw", "important");
+          innerBox.style.setProperty("width", "82vw", "important");
+          innerBox.style.innerHTML = dynamicHtml; // 雙重防禦
         }
       }, 10);
     }
