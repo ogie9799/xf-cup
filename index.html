@@ -399,7 +399,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              202627幸福盃國標麻將隊制賽
+              202628幸福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -962,9 +962,9 @@
       document.getElementById("modal-setup").style.display = "none"; 
     }
 
-        /**
-     * 對局策略動態計算看板彈窗控制項 (V10.0 全自動聯動完全體)
-     * 💡 幸福盃二階段策略終極通車：完美綁定大表 DOM 節點，即時抓取平板畫面 4 人成績，100% 全自動計算！
+   /**
+     * 對局策略動態計算看板彈窗控制項 (V17.5 世紀竣工大對位完全體)
+     * 💡 幸福盃終極修復：修正 style.innerHTML 語法死結，100% 恢復顯示！釋放 82vw 寬度，讓 App 捷徑大字震撼降臨！
      */
     function openStrategyModal() {
       // 1. 先把主彈窗外殼顯示出來
@@ -981,88 +981,23 @@
         if (match) currentTable = parseInt(match, 10);
       }
 
-      // 3. 🚀 全自動畫面上色抓取：直接串接 `"main-p" + i + "-name"` 的黃金兄弟元件！
-      var list = [];
-      for (var i = 1; i <= 4; i++) {
-        // A. 抓取選手姓名 (100% 複製大師 openSetupModal 的高可用提取技術，杜絕 HTML 標籤污染)
-        var nameEl = document.getElementById("main-p" + i + "-name");
-        var pName = "選手" + i;
-        if (nameEl) {
-          var tempDiv = document.createElement("div");
-          tempDiv.innerHTML = nameEl.innerHTML;
-          pName = tempDiv.textContent || tempDiv.innerText || "";
-          pName = pName.replace(/[\r\n\t]/g, "").trim();
-        }
+      // 3. 提煉當桌數據與生成雙表 HTML 模板
+      var dynamicHtml = generateInnerStrategyTablesHtml(null, currentTable);
 
-        // B. 萬能對稱抓取：自動匹配大師的累計分數 ID (score 或 total 或大表欄位)
-        var scoreEl = document.getElementById("main-p" + i + "-score") || 
-                      document.getElementById("main-p" + i + "-total") ||
-                      document.getElementById("main-p" + i + "-accumulated");
-        
-        var pScore = 0;
-        if (scoreEl) {
-          // 成功提取大表元件中的文字，並轉成真實數字 (支援負分)
-          pScore = parseFloat(scoreEl.innerText.replace(/[^\d.-]/g, "")) || 0;
-        } else {
-          // 💡 終極保險絲：如果大師的 ID 命名很不一樣，我們直接去大表第 3 行(累計列) 的第 (i+1) 個網格硬拆文字！
-          // 這對應您畫面上「鄭碩蓁(21)、陳建呈(-119)、蔡白芳(72)、羅生偉(26)」的網格排列
-          var backupCell = document.querySelector("tr:nth-child(3) td:nth-child(" + (i + 1) + ")") || 
-                           document.querySelector("tr:nth-child(4) td:nth-child(" + (i + 1) + ")");
-          if (backupCell) {
-            pScore = parseFloat(backupCell.innerText.replace(/[^\d.-]/g, "")) || 0;
-          }
-        }
-
-        list.push({ name: pName, score: pScore });
-      }
-
-      // 4. 對這 4 位真實選手依分數由高到低進行同桌內部排行 (這時 👑 蔡白芳 72分 絕對穩居榜首！)
-      list.sort(function(a, b) { return b.score - a.score; }); 
-
-      // 找出該桌榜首的分數
-      var defenderScore = list.length > 0 ? list[0].score : 0;
-      
-      // 5. 國標幸福盃策略公式計算 (超越常數 31、追平常數 32，無條件進位，未滿 8 番鎖死為 8 番)
-      var calcFan = function(diff, constVal, div) {
-        var numerator = diff - constVal;
-        if (numerator <= 0) return 8;
-        var f = Math.ceil(numerator / div);
-        return f < 8 ? 8 : f;
-      };
-
-      var buildStrategyRows = function(c) {
-        return list.map(function(p) {
-          return {
-            name: p.name,
-            score: p.score,
-            isLeader: p.score === defenderScore,
-            self: p.score === defenderScore ? "-" : calcFan(defenderScore - p.score, c, 4),
-            direct: p.score === defenderScore ? "-" : calcFan(defenderScore - p.score, c, 2),
-            side: p.score === defenderScore ? "-" : calcFan(defenderScore - p.score, c, 1)
-          };
-        });
-      };
-
-      var strategyData = { surpass: buildStrategyRows(31), tie: buildStrategyRows(32) };
-
-      // 6. 生成要塞入彈窗的雙表 HTML 內容
-      var dynamicHtml = generateInnerStrategyTablesHtml(strategyData, currentTable);
-
-       // 7. 強力注入 (V17.0 App全螢幕大字適配版)
+      // 4. 🚀 鋼骨剛性大字適配注入：延遲 10 毫秒強力破防
       setTimeout(function() {
         var innerBox = document.querySelector("#modal-strategy .modal-content-box") || document.getElementById("modal-strategy");
         if (innerBox) {
-          innerBox.style.border = "3px solid #ea580c";
+          // 精準修正：移除錯誤的 .style.innerHTML，回歸標準的 .innerHTML 注入，表格火速回歸！
+          innerBox.innerHTML = dynamicHtml;
           
-          // 🚀 關鍵解鎖：利用 vw (視窗寬度百分比) 代替 px 與固定 94%，
-          // 配合 CSS 的 scale 放大晶片，在 App 捷徑下直接把左右與字體強行撐大！
+          // 強制設定寬度與邊框，配合 CSS 的 scale(1.45) 放大晶片，在 App 捷徑下將字體強行放大、霸氣滿版！
+          innerBox.style.border = "3px solid #ea580c";
           innerBox.style.setProperty("max-width", "82vw", "important");
           innerBox.style.setProperty("width", "82vw", "important");
-          innerBox.style.innerHTML = dynamicHtml; // 雙重防禦
         }
       }, 10);
     }
-
 
         /**
      * 內部核心輔助函式 B：動態生成 HTML 內層雙表模板 (V16.0 世紀大竣工不敗完全體)
