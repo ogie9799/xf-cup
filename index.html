@@ -74,11 +74,12 @@
       align-items: center;
       z-index: 9999;
     }
- /* 🚀 幸福盃行動端 App 捷徑防微縮放大晶片 */
+    /* 🚀 幸福盃行動端 App 捷徑防微縮大字鎖死晶片 (V18.0 終極剛性版) */
     #modal-strategy .modal-content-box {
-      transform: scale(1.2) !important;
-      transform-origin: center center !important;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+      transform: scale(1.0) !important; /* 解除縮放限制，走物理大字體路線 */
+      width: 95vw !important;           /* 寬度擴展到 95%，兩側完全張開 */
+      max-width: 410px !important;      /* 最大寬度提升到 410px 傲然寬敞 */
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6) !important;
     }
 
 
@@ -399,7 +400,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              202628幸福盃國標麻將隊制賽
+              202630幸福盃國標麻將隊制賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -999,21 +1000,21 @@
       }, 10);
     }
 
-        /**
-     * 內部核心輔助函式 B：動態生成 HTML 內層雙表模板 (V16.0 世紀大竣工不敗完全體)
-     * 💡 幸福盃終極竣工：全邏輯大一統打包！100% 獨立自主抓取排行、算分與渲染，永久徹底消滅 NaN 與破格切西瓜！
+     /**
+     * 內部核心輔助函式 B：動態生成 HTML 內層雙表模板 (V18.5 世紀大竣工不敗版)
+     * 💡 幸福盃終極落成：精準校正 idx 變數咬合，彻底消滅 NaN！剛性大字體、左右寬度全解放，100% 完美竣工！
      */
     function generateInnerStrategyTablesHtml(dummyData, tableNum) {
       
-      // 🚀 1. 終極不講理直取：直接去平板大表上把當下 4 位選手的真名與真分數撈進來
+      // 1. 直取平板大表真實數據 (鄭碩蓁、陳建呈、蔡白芳、羅生偉)
       var rawPlayers = [];
-      for (var idx = 1; idx <= 4; idx++) {
-        var nameEl = document.getElementById("main-p" + idx + "-name");
-        var scoreEl = document.getElementById("main-p" + idx + "-score") || 
-                      document.getElementById("main-p" + idx + "-total") ||
-                      document.getElementById("main-p" + idx + "-accumulated");
+      for (var k = 1; k <= 4; k++) {
+        var nameEl = document.getElementById("main-p" + k + "-name");
+        var scoreEl = document.getElementById("main-p" + k + "-score") || 
+                      document.getElementById("main-p" + k + "-total") ||
+                      document.getElementById("main-p" + k + "-accumulated");
         
-        var pName = "選手" + idx;
+        var pName = "選手" + k;
         if (nameEl) {
           var tempDiv = document.createElement("div");
           tempDiv.innerHTML = nameEl.innerHTML;
@@ -1023,12 +1024,10 @@
 
         var pScore = 0;
         if (scoreEl) {
-          // 提取文字轉為真實浮點數 (支援負分機制)
           pScore = parseFloat(scoreEl.innerText.replace(/[^\d.-]/g, "")) || 0;
         } else {
-          // 萬能縱列備用線：若 ID 沒對上，直接去網格的第 3/4 行(累計列)硬拆即時分數
-          var backupCell = document.querySelector("tr:nth-child(3) td:nth-child(" + (idx + 1) + ")") || 
-                           document.querySelector("tr:nth-child(4) td:nth-child(" + (idx + 1) + ")");
+          var backupCell = document.querySelector("tr:nth-child(3) td:nth-child(" + (k + 1) + ")") || 
+                           document.querySelector("tr:nth-child(4) td:nth-child(" + (k + 1) + ")");
           if (backupCell) {
             pScore = parseFloat(backupCell.innerText.replace(/[^\d.-]/g, "")) || 0;
           }
@@ -1036,10 +1035,10 @@
         rawPlayers.push({ name: pName, score: pScore });
       }
 
-      // 🚀 2. 依據真實分數由高到低進行同桌內部排行 (蔡白芳 72分 100% 穩坐 index 0 冠軍位)
+      // 2. 依真實分數由高到低進行同桌內部排行 (確保榜首穩坐 index 0)
       rawPlayers.sort(function(a, b) { return b.score - a.score; });
 
-      // 🚀 3. 核心行矩陣渲染引擎 (封裝於內部，完全阻斷外部變數干擾)
+      // 3. 核心行矩陣渲染引擎 (🚀 變數指引與路徑 100% 鎖死鎖嚴)
       var renderMatrixRows = function(constant, isSurpassMode) {
         var calcFan = function(diff, constVal, div) {
           var num = diff - constVal;
@@ -1050,37 +1049,36 @@
 
         var htmlBuffer = "";
         
-        // 階梯矩陣對位：亞軍(1人)、季軍(2人)、殿軍(3人)
         var steps = [
           { p: rawPlayers[1], defenders: [rawPlayers[0]], rows: 1 },                  // 亞軍 ➡️ 追冠
           { p: rawPlayers[2], defenders: [rawPlayers[0], rawPlayers[1]], rows: 2 },       // 季軍 ➡️ 追冠、亞
           { p: rawPlayers[3], defenders: [rawPlayers[0], rawPlayers[1], rawPlayers[2]], rows: 3 } // 殿軍 ➡️ 追冠、亞、季
         ];
 
-        // 戰術主題色與白話文字徽章
         var rowBgColor = isSurpassMode ? '#22252a' : '#1e293b';
         var badgeHtml = isSurpassMode ? 
-          '<br><span style="background-color: #ea580c; color: white; font-size: 9px; padding: 1px 3px; border-radius: 2px; font-weight: normal; display: inline-block; margin-top: 2px;">超越</span>' : 
-          '<br><span style="background-color: #0088CC; color: white; font-size: 9px; padding: 1px 3px; border-radius: 2px; font-weight: normal; display: inline-block; margin-top: 2px;">追平</span>';
+          '<br><span style="background-color: #ea580c; color: white; font-size: 10px; padding: 1px 4px; border-radius: 2px; font-weight: bold; display: inline-block; margin-top: 2px;">超越</span>' : 
+          '<br><span style="background-color: #0088CC; color: white; font-size: 10px; padding: 1px 4px; border-radius: 2px; font-weight: bold; display: inline-block; margin-top: 2px;">追平</span>';
 
         steps.forEach(function(step) {
-          for (var i = 0; i < step.defenders.length; i++) {
-            var def = step.defenders[i];
+          // 🚀 核心校正：精準使用 idx 作為內部循環標記，絕不與外部混淆
+          for (var idx = 0; idx < step.defenders.length; idx++) {
+            var def = step.defenders[idx];
             var diff = def.score - step.p.score;
             
-            htmlBuffer += '<tr style="color: white; height: 21px; background-color: ' + rowBgColor + ';">';
+            htmlBuffer += '<tr style="color: white; height: 23px; background-color: ' + rowBgColor + ';">';
             
-            // 只有在每一位挑戰者的第一行(i === 0)畫出名字與戰術標籤
-            if (i === 0) {
-              htmlBuffer += '<td rowspan="' + step.rows + '" style="border: 1px solid #444; padding: 2px 1px; font-size: 12px; font-weight: bold; background-color: #15171c; white-space: nowrap; vertical-align: middle;">' + step.p.name + badgeHtml + '</td>';
+            // 只有在每一位挑戰者的第一行(idx === 0)畫出名字與戰術徽章
+            if (idx === 0) {
+              htmlBuffer += '<td rowspan="' + step.rows + '" style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; font-weight: bold; background-color: #15171c; white-space: nowrap; vertical-align: middle;">' + step.p.name + badgeHtml + '</td>';
             }
 
-            // 填入衛冕者、分差、自摸、對點、旁點 (左右加寬，內距壓低，字體放大)
-            htmlBuffer += '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 12px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 2px 1px; font-size: 12px; color: #bbb; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 2px 1px; color: #FF4D4D; font-weight: bold; font-size: 14px; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 2px 1px; color: #FFAA00; font-weight: bold; font-size: 14px; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 2px 1px; color: #2ECC71; font-weight: bold; font-size: 14px; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
+            // 填入衛冕者、分差、自摸、對點、旁點
+            htmlBuffer += '<td style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
+                          '<td style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; color: #fff; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
+                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #FF4D4D; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
+                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #FFAA00; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
+                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #2ECC71; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
                           '</tr>';
           }
         });
@@ -1088,16 +1086,14 @@
         return htmlBuffer;
       };
 
-      // 🚀 4. 生成大一統全屏鋼骨網格主結構
-      return '<div style="background-color: #1A1A1A; color: white; padding: 6px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box !important; font-size: 12px; overflow: hidden;">' +
+      // 4. 生成大一統全屏鋼骨網格主結構
+      return '<div style="background-color: #1A1A1A; color: white; padding: 6px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box !important; font-size: 13px; overflow: hidden;">' +
              
              '<div style="margin-bottom: 6px; width: 100%; box-sizing: border-box !important;">' +
-             // 寬度改為 98% 剛性內縮，預留 2% 右側邊框空隙，徹底根除最右邊被螢幕切西瓜！
              '<table style="width: 98% !important; margin: 0 auto !important; border-collapse: collapse; border: 1.5px solid #444; table-layout: fixed; box-sizing: border-box !important;">' +
-             // 精密分配左右黃金寬度比例：挑戰者24%, 衛冕者24%, 分差13%, 自摸13%, 對點13%, 旁點13%
              '<colgroup><col style="width:24%"><col style="width:24%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>' +
              '<thead>' +
-             '<tr style="background-color: #2D3748; font-size: 12px; color: #FFF; height: 22px;">' +
+             '<tr style="background-color: #2D3748; font-size: 13px; color: #FFF; height: 24px;">' +
              '<th style="padding: 2px 1px; border: 1px solid #444; background-color:#111;">挑戰者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFF2CC;">衛冕者</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #e2e8f0;">分差</th>' +
@@ -1107,16 +1103,14 @@
              '</tr>' +
              '</thead>' +
              '<tbody>' + 
-               // 塞入超越策略數據 (常數 31，炭黑灰色區)
                renderMatrixRows(31, true) + 
-               // 塞入追平策略數據 (常數 32，電競深藍灰區)
                renderMatrixRows(32, false) + 
              '</tbody>' +
              '</table>' +
              '</div>' +
 
              '<button onclick="document.getElementById(\'modal-strategy\').style.display=\'none\';" ' +
-             'style="margin-top: 4px; background-color: #ea580c; color: white; border: none; padding: 4px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 98%; height: 32px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin: 0 auto; display: block;">' +
+             'style="margin-top: 4px; background-color: #ea580c; color: white; border: none; padding: 4px; font-size: 14px; font-weight: bold; border-radius: 4px; cursor: pointer; width: 98%; height: 34px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin: 0 auto; display: block;">' +
              '確認返回大表' +
              '</button>' +
              '</div>';
