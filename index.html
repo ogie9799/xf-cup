@@ -1957,5 +1957,45 @@
     });
     window.addEventListener("resize", adjustMobileVh);
   </script>
+<!-- ==========================================================================
+   國標麻將幸福盃控台 - 分數色彩剛性分流（正分/0 變藍、負分變紅）
+   ========================================================================== -->
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    function applyScoreColors() {
+        // 1. 精準抓取大表內得分格子的所有數字（排除編號、排名、盤次等非數字格子）
+        const scoreCells = document.querySelectorAll('#score-main-table td');
+        
+        scoreCells.forEach(cell => {
+            // 取得格子內的純文字，並去掉空格與加號
+            let text = cell.innerText.trim().replace('+', '');
+            
+            // 2. 轉換為數字進行剛性邏輯判定
+            let score = parseFloat(text);
+            
+            // 確保這格是數字（排除姓名、編號、排名等中文字或英文）
+            if (!isNaN(score)) {
+                
+                // 3. 🎯 核心分流邏輯
+                if (score >= 0) {
+                    // 大於等於 0（含純數字、帶+號、0）：一律變更為藍色
+                    cell.style.setProperty('color', '#0022FF', 'important'); 
+                    cell.style.setProperty('font-weight', '900', 'important');
+                } else {
+                    // 小於 0（負分）：一律變更為紅色
+                    cell.style.setProperty('color', '#FF0000', 'important');
+                    cell.style.setProperty('font-weight', '900', 'important');
+                }
+            }
+        });
+    }
+
+    // 網頁載入時立刻執行，並在 500ms 後再次補刀，防止非同步資料載入延遲
+    applyScoreColors();
+    setTimeout(applyScoreColors, 500);
+    setTimeout(applyScoreColors, 1500); // 針對非同步讀取特別補刀
+});
+</script>
+
 </body>
 </html>
