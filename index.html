@@ -1999,9 +1999,25 @@ html body #score-main-table input {
     line-height: 1.3 !important;
 }
 
-/* 2. 🎯 核心突圍：利用 CSS 媒體查詢（Media Query）專門校正手機/LINE版 */
+/* 2. ⚡ 終極核心：強制隱藏 Android / iOS 手機上日期輸入框的隱形日曆時鐘圖示 */
+/* 這能直接為 LINE 版硬生生擠出 30px 的黃金空間！ */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none !important;
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* 3. 🎯 環境分流：利用 CSS 媒體查詢單獨微調手機/LINE版 */
 @media screen and (max-width: 480px) {
-    /* 讓手機版上的所有表格文字稍微調溫和（15px），防止撐破格子 */
+    /* 手機版全域文字調整為安全穩定的 15px，確保按鈕（初始化、清空）絕對不跑版變形 */
     html body #score-main-table th,
     html body #score-main-table td,
     html body #score-main-table span,
@@ -2009,30 +2025,26 @@ html body #score-main-table input {
         font-size: 15px !important;
     }
     
-    /* ⚡ 縮小燈極限爆發：精準鎖定日期格及其內所有元素，強制縮小硬塞 */
-    html body #score-main-table tr:nth-child(1) th:nth-child(2),
-    html body #score-main-table tr:nth-child(1) th:nth-child(2) *,
-    html body #score-main-table tr:nth-child(2) td:nth-child(1),
-    html body #score-main-table tr:nth-child(2) td:nth-child(1) *,
+    /* 精準鎖定日期格子內部的 input，消除留白、微調字距，讓 8 碼輕鬆並排 */
+    html body #score-main-table tr:nth-child(1) th:nth-child(2) input,
     html body #score-main-table tr:nth-child(2) td:nth-child(1) input {
-        display: inline-block !important;
-        font-size: 10px !important;         /* 降到 10px，挪出絕對空間 */
-        letter-spacing: -1.8px !important;  /* 字距極限黏緊，寬度直接省一半 */
+        font-size: 12px !important;         /* 溫和縮小到 12px */
+        letter-spacing: -1px !important;   /* 稍微緊縮字距 */
         white-space: nowrap !important;     /* 絕對不准折行 */
-        transform: scale(0.75) !important;  /* ⚡ 縮小燈開到 0.75，強迫 8 碼完全現形 */
-        transform-origin: center center !important;
+        text-align: center !important;      /* 完美居中 */
+        padding: 2px 0px !important;        /* 消除內距 */
         width: 100% !important;
-        text-align: center !important;
     }
     
-    /* 確保日期儲存格主體外框左右留白徹底切齊，文字絕對置中 */
+    /* 恢復表格外框原本最安全的標準骨架，確保四個功能按鈕完美歸位 */
     html body #score-main-table tr:nth-child(1) th:nth-child(2),
     html body #score-main-table tr:nth-child(2) td:nth-child(1) {
-        padding: 4px 0px !important;
+        padding: 4px 2px !important;
         text-align: center !important;
         vertical-align: middle !important;
-        width: auto !important;             /* 順應骨架不硬幹寬度 */
+        transform: none !important;         /* 徹底移除導致左圖變形的 scale 縮放 */
     }
 }
 </style>
+
 </html>
