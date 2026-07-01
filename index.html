@@ -2031,36 +2031,41 @@ html body #score-main-table tr:nth-child(1) th {
    ========================================================================== -->
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-    function forceDateWidth() {
-        // 1. 地毯式搜尋網頁中所有的 input 和 span
-        const allInputs = document.querySelectorAll('#score-main-table input, #score-main-table span, #score-main-table td, #score-main-table th');
+    function ultimateDateWidth() {
+        const allElements = document.querySelectorAll('#score-main-table input, #score-main-table span, #score-main-table td, #score-main-table th');
         
-        allInputs.forEach(el => {
-            // 2. 只要發現裡面包含 "2026" 或者是日期輸入框，直接就地正法撐開寬度
+        allElements.forEach(el => {
+            // 盲抓任何包含 2026 或相關的日期格子
             if (el.innerText.includes('2026') || (el.value && el.value.includes('2026')) || el.id === 'date' || el.className.includes('date')) {
                 
-                // 暴力強制撐開該元素及其父層格子的寬度
-                el.style.setProperty('width', '95px', 'important');
-                el.style.setProperty('min-width', '95px', 'important');
-                el.style.setProperty('letter-spacing', '-1.5px', 'important'); /* 極限縮小數字間距 */
-                el.style.setProperty('font-size', '13px', 'important');
+                // 1. ⚡ 寬度再加碼：從 95px 剛性拉大到 105px，提供絕對充足的字元空間
+                el.style.setProperty('width', '105px', 'important');
+                el.style.setProperty('min-width', '105px', 'important');
+                el.style.setProperty('max-width', '105px', 'important');
                 
+                // 2. ⚡ 字距極限壓縮：從 -1.5px 壓榨到 -1.8px，讓數字排得更緊密
+                el.style.setProperty('letter-spacing', '-1.8px', 'important'); 
+                
+                // 3. ⚡ 字型微調：稍微降到 12px，確保在 LINE 窄畫面上絕對不爆格
+                el.style.setProperty('font-size', '12px', 'important');
+                el.style.setProperty('white-space', 'nowrap', 'important');
+                
+                // 4. 強制父層格子同步擴張，並將左右留白完全歸零
                 if (el.parentElement) {
-                    el.parentElement.style.setProperty('width', '95px', 'important');
-                    el.parentElement.style.setProperty('min-width', '95px', 'important');
+                    el.parentElement.style.setProperty('width', '105px', 'important');
+                    el.parentElement.style.setProperty('min-width', '105px', 'important');
+                    el.parentElement.style.setProperty('max-width', '105px', 'important');
                     el.parentElement.style.setProperty('padding', '4px 0px', 'important');
                 }
             }
         });
     }
 
-    // 進入網頁時立刻轟炸執行，並在 300ms 與 800ms 後再次補刀，防止被其他程式蓋掉
-    forceDateWidth();
-    setTimeout(forceDateWidth, 300);
-    setTimeout(forceDateWidth, 800);
+    // 連續發動三次剛性轟炸，確保徹底洗牌成功
+    ultimateDateWidth();
+    setTimeout(ultimateDateWidth, 200);
+    setTimeout(ultimateDateWidth, 600);
 });
 </script>
-
-
 
 </html>
