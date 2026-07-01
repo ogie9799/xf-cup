@@ -1984,4 +1984,49 @@ html body #score-main-table input {
     window.addEventListener("resize", adjustMobileVh);
   </script>
 </body>
+
+<!-- ==========================================================================
+   國標麻將幸福盃控台 - HTML 終極剛性注入（網址版+LINE版完美通車）
+   ========================================================================== -->
+<style>
+/* 1. 暴力擊穿那126個 CSS 檔案，強制全網址版放大、加粗 */
+html body #score-main-table,
+html body #score-main-table th,
+html body #score-main-table td,
+html body #score-main-table tr {
+    font-size: 17px !important;        /* 強制拉大到 17px，清晰度大幅提升 */
+    font-weight: 900 !important;        /* 超剛性重粗體，完美對齊 LINE 扎實感 */
+    line-height: 1.2 !important;
+}
+
+/* 2. 針對所有名字與表格文字，一律同步拉大 */
+html body #score-main-table td,
+html body #score-main-table th,
+html body #score-main-table span,
+html body #score-main-table input {
+    font-size: 17px !important;
+    font-weight: 900 !important;
+}
+
+/* 3. 🎯 核心關鍵：單獨拯救「日期格」與「局次格」，防止變形折行 */
+/* 讓日期格的字體稍微縮小一點（14px），確保 8 碼數字在手機寬度下絕對能排成一列 */
+html body #score-main-table tr:first-child th,
+html body #score-main-table tr:first-child td,
+html body #score-main-table tr:nth-child(2) td {
+    white-space: nowrap !important;     /* 強制不折行 */
+    padding: 4px 0px !important;        /* 左右留白歸零，擠出最大空間 */
+}
+
+/* 專屬微調：精準鎖定第一列與第二列的儲存格，讓 8 碼日期完美微縮並排 */
+html body #score-main-table tr:nth-child(1) th,
+html body #score-main-table tr:nth-child(1) td,
+html body #score-main-table tr:nth-child(2) th,
+html body #score-main-table tr:nth-child(2) td,
+html body #score-main-table tr:nth-child(2) td span {
+    font-size: 13px !important;         /* 降到 13px，確保手機螢幕絕對塞得下 8 碼 */
+    letter-spacing: -1px !important;    /* 字距微緊縮，保證不爆格 */
+}
+
+</style>
+
 </html>
