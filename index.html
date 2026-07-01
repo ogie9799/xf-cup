@@ -2026,6 +2026,45 @@ html body #score-main-table tr:nth-child(1) th {
     vertical-align: middle !important;
 }
 </style>
+<!-- ==========================================================================
+   國標麻將幸福盃控台 - JavaScript 終極寬度剛性洗牌（專治 LINE 固執切字）
+   ========================================================================== -->
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    function overrideWidths() {
+        // 1. 精準抓取表格第一列的所有單元格
+        const firstRowCells = document.querySelectorAll('#score-main-table tr:nth-child(1) > *');
+        const secondRowCells = document.querySelectorAll('#score-main-table tr:nth-child(2) > *');
+        
+        // 2. 暴力重新分配第一列寬度（初始化、日期、局次、第3桌變更、清空）
+        // 刻意給日期格（第2格）高達 90px 的生存空間，並壓縮旁邊格子
+        if (firstRowCells && firstRowCells.length >= 2) {
+            firstRowCells[1].style.setProperty('width', '90px', 'important');
+            firstRowCells[1].style.setProperty('min-width', '90px', 'important');
+            firstRowCells[1].style.setProperty('max-width', '90px', 'important');
+        }
+        
+        // 3. 暴力重新分配第二列寬度（日期下方的輸入框格）
+        if (secondRowCells && secondRowCells.length >= 1) {
+            secondRowCells[0].style.setProperty('width', '90px', 'important');
+            secondRowCells[0].style.setProperty('min-width', '90px', 'important');
+            secondRowCells[0].style.setProperty('max-width', '90px', 'important');
+            
+            // 4. 強迫日期內部的 input 或 span 寬度 100% 填滿，把被切掉的 8 碼吐出來
+            const innerElements = secondRowCells[0].querySelectorAll('input, span');
+            innerElements.forEach(el => {
+                el.style.setProperty('width', '100%', 'important');
+                el.style.setProperty('min-width', '100%', 'important');
+                el.style.setProperty('letter-spacing', '-1.5px', 'important'); // 極限緊縮字距
+            });
+        }
+    }
+
+    // 執行洗牌：載入時執行，並延遲 500ms 防止被其他 JS 覆蓋
+    overrideWidths();
+    setTimeout(overrideWidths, 500);
+});
+</script>
 
 
 </html>
