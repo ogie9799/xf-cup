@@ -1987,42 +1987,52 @@ html body #score-main-table input {
 
 <style>
 /* ==========================================================================
-   國標麻將幸福盃控台 - 網址與 LINE 雙版本終極分流校正
-   ========================================================================== */
+   國標麻將幸福盃控台 - 網址版放大 + LINE版日期獨立突圍版
+   ========================================================================= */
 
-/* 1. 全域表格文字：暴力放大、加粗，對齊 LINE 扎實感（專治網址版過小問題） */
+/* 1. 網址版全域放大：保持右圖的完美清晰度 */
 html body #score-main-table th,
 html body #score-main-table td,
 html body #score-main-table span,
 html body #score-main-table input {
-    font-size: 17px !important;        /* 網址版字體全面拉大到 17px */
-    font-weight: 900 !important;        /* 剛性超重粗體 */
+    font-size: 17px !important;        
+    font-weight: 900 !important;        
     line-height: 1.3 !important;
 }
 
-/* 2. 🎯 日期專屬格子：強制擴張寬度，解決 LINE 版 8 碼顯示不全 */
-/* 透過精準定位第一列第二格（日期欄位），強行撐開格子 */
-html body #score-main-table tr:nth-child(1) th:nth-child(2),
-html body #score-main-table tr:nth-child(1) td:nth-child(2),
+/* 2. 🎯 LINE版日期獨立突圍：徹底解決左圖 8 碼被擠斷的問題 */
+/* 直接把第一列放日期的 th 改為 block 屬性，強迫它在窄螢幕上自己獨立一列，不受兩側按鈕擠壓 */
+html body #score-main-table tr:nth-child(1) th:nth-child(2) {
+    display: inline-block !important;   /* 強制突圍，獨立成塊 */
+    width: 100px !important;            /* 給予絕對充足的 100px 寬度 */
+    font-size: 14px !important;         /* 字體微縮到 14px 確保 8 碼必出 */
+    white-space: nowrap !important;     /* 絕對不准折行 */
+    letter-spacing: -0.5px !important;  /* 緊湊字距 */
+    padding: 4px 0px !important;        /* 左右內距歸零 */
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* 3. 修正日期下方對應的輸入框（第二列第一格），同步跟進寬度與字級 */
 html body #score-main-table tr:nth-child(2) td:nth-child(1),
 html body #score-main-table tr:nth-child(2) td:nth-child(1) span,
 html body #score-main-table tr:nth-child(2) td:nth-child(1) input {
-    font-size: 13px !important;         /* 日期數字稍微降到 13px，確保不爆格 */
-    letter-spacing: -0.5px !important;  /* 緊湊字距 */
-    white-space: nowrap !important;     /* 強制不折行 */
-    min-width: 85px !important;         /* ⚡關鍵：強行撐開格子寬度，讓 8 碼絕對裝得下 */
-    padding: 4px 1px !important;        /* 壓縮內距 */
+    display: inline-block !important;
+    width: 100px !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    letter-spacing: -0.5px !important;
 }
 
-/* 3. 局次與特殊按鈕還原：防止被第 2 點誤傷，維持原本該有的大字 */
+/* 4. 確保其他按鈕（初始化、局次、第3桌變更、清空）維持正常大字與間距 */
+html body #score-main-table tr:nth-child(1) th:nth-child(1),
 html body #score-main-table tr:nth-child(1) th:nth-child(3),
-html body #score-main-table tr:nth-child(1) th:nth-child(4),
-html body #score-main-table tr:nth-child(2) td:nth-child(2) {
-    font-size: 17px !important;
+html body #score-main-table tr:nth-child(1) th:nth-child(4) {
+    font-size: 16px !important;
     font-weight: 900 !important;
-    min-width: auto !important;
 }
 </style>
+
 
 
 </html>
