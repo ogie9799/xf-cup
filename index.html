@@ -2009,29 +2009,30 @@ html body #score-main-table input {
         font-size: 15px !important;
     }
     
-    /* ⚡ 縮小燈大絕：精準鎖定「日期」與「日期下方輸入框」，發動比例縮放 */
+    /* ⚡ 縮小燈極限爆發：精準鎖定日期格及其內所有元素，強制縮小硬塞 */
+    html body #score-main-table tr:nth-child(1) th:nth-child(2),
     html body #score-main-table tr:nth-child(1) th:nth-child(2) *,
+    html body #score-main-table tr:nth-child(2) td:nth-child(1),
     html body #score-main-table tr:nth-child(2) td:nth-child(1) *,
     html body #score-main-table tr:nth-child(2) td:nth-child(1) input {
         display: inline-block !important;
-        font-size: 11px !important;         /* 字體縮小，確保 8 碼必出 */
-        letter-spacing: -1.5px !important;  /* 字距極限緊縮 */
+        font-size: 10px !important;         /* 降到 10px，挪出絕對空間 */
+        letter-spacing: -1.8px !important;  /* 字距極限黏緊，寬度直接省一半 */
         white-space: nowrap !important;     /* 絕對不准折行 */
-        transform: scale(0.9) !important;   /* 用比例直接縮小 10%，硬塞進格子 */
+        transform: scale(0.75) !important;  /* ⚡ 縮小燈開到 0.75，強迫 8 碼完全現形 */
         transform-origin: center center !important;
         width: 100% !important;
         text-align: center !important;
     }
     
-    /* 確保日期儲存格本身左右留白歸零，文字自動置中 */
+    /* 確保日期儲存格主體外框左右留白徹底切齊，文字絕對置中 */
     html body #score-main-table tr:nth-child(1) th:nth-child(2),
     html body #score-main-table tr:nth-child(2) td:nth-child(1) {
         padding: 4px 0px !important;
         text-align: center !important;
         vertical-align: middle !important;
+        width: auto !important;             /* 順應骨架不硬幹寬度 */
     }
 }
 </style>
-
-
 </html>
