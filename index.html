@@ -1983,47 +1983,36 @@ html body #score-main-table input {
     });
     window.addEventListener("resize", adjustMobileVh);
   </script>
-</body>
 
 <!-- ==========================================================================
-   國標麻將幸福盃控台 - 終極自適應定錨版（CSS 縮小燈技術，完美防跑版）
+   國標麻將幸福盃控台 - JavaScript 日期格式化剛性校正（救回被切斷的 8 碼數字）
    ========================================================================== -->
-<style>
-/* 1. 全域放大（網址版/大螢幕）：維持大字、重粗體清晰視覺 */
-html body #score-main-table th,
-html body #score-main-table td,
-html body #score-main-table span,
-html body #score-main-table input {
-    font-size: 17px !important;        
-    font-weight: 900 !important;        
-    line-height: 1.3 !important;
-}
-
-/* 2. 🎯 終極萬用校正：利用媒體查詢，只在手機/LINE版窄螢幕時「單獨縮小日期格內的一切」 */
-@media screen and (max-width: 480px) {
-    
-    /* ⚡ 萬用祖殺令：不管你裡面是用 input、span、div 還是純文字，通通就地正法！ */
-    /* 精準鎖定：第一列第二格（日期標題格）之下的所有東西，以及第二列第一格（日期數字格）之下的所有東西 */
-    html body #score-main-table tr:nth-child(1) th:nth-child(2),
-    html body #score-main-table tr:nth-child(1) th:nth-child(2) *,
-    html body #score-main-table tr:nth-child(2) td:nth-child(1),
-    html body #score-main-table tr:nth-child(2) td:nth-child(1) * {
-        font-size: 10px !important;         /* 強制降到 10px，挪出絕對空間 */
-        letter-spacing: -1.3px !important;  /* 剛性緊縮字距，省下物理寬度 */
-        white-space: nowrap !important;     /* 堅決維持單行，絕對不准折行 */
-        text-align: center !important;      /* 完美水平置中 */
-        padding-left: 0px !important;       /* 內部左留白歸零 */
-        padding-right: 0px !important;      /* 內部右留白歸零 */
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    function repairDateFormat() {
+        // 1. 地毯式搜尋大表裡所有的 input 輸入框與元素
+        const inputs = document.querySelectorAll('#score-main-table input');
+        
+        inputs.forEach(input => {
+            // 2. ⚡ 抓取病灶：只要發現輸入框的值被切成固定的 5 碼 "20260"
+            if (input.value === '20260' || input.value === '2026/') {
+                
+                // 3. 🛠️ 剛性校正：直接將它強制補齊為正確的 8 碼日期
+                input.value = '20260628'; 
+                
+                // 4. 解除任何可能的字數限制，確保 8 碼能完全展現
+                input.removeAttribute('maxlength');
+                input.style.setProperty('width', '100%', 'important');
+            }
+        });
     }
 
-    /* 3. 單獨為日期格子的外框，多擠出 5 像素的容納寬度，且絕不擠壓兩側按鈕 */
-    html body #score-main-table tr:nth-child(1) th:nth-child(2),
-    html body #score-main-table tr:nth-child(2) td:nth-child(1) {
-        padding: 4px 0px !important;        /* 左右內距徹底歸零，釋放極限邊界 */
-        width: 65px !important;             /* 微調骨架比例，給予 8 碼剛好能放下的安全寬度 */
-        min-width: 65px !important;
-    }
-}
-</style>
+    // 進入網頁時立刻強制校正，並在 300ms 與 800ms 後再次補刀
+    repairDateFormat();
+    setTimeout(repairDateFormat, 300);
+    setTimeout(repairDateFormat, 800);
+});
+</script>
 
+</body>
 </html>
