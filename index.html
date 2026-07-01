@@ -51,6 +51,32 @@
       table-layout: fixed;
     }
 
+/* ==========================================================================
+   國標麻將幸福盃控台 - 智慧型剛性優化版（救回日期與姓名，防爆專用）
+   ========================================================================== */
+html body #score-main-table,
+html body #score-main-table th,
+html body #score-main-table td,
+html body #score-main-table tr {
+    font-size: 15px !important;       /* 剛性定錨 15px，文字絕不爆格 */
+    font-weight: 800 !important;       /* 保持厚實粗體，對齊 LINE 版高辨識度 */
+    line-height: 1.2 !important;       /* 舒適行高，防止上下文字重疊 */
+}
+
+/* 針對「日期」格與「姓名」格特別優化，確保寬度足夠顯示 */
+html body #score-main-table td, 
+html body #score-main-table th {
+    white-space: nowrap !important;    /* 強制文字不折行，讓 8 碼日期並排顯示 */
+    padding: 6px 1px !important;       /* 左右內距縮到最小，擠出空間給數字 */
+}
+
+/* 讓表格內的 input、span 或特定文字（如姓名、日期）自動完美縮放 */
+html body #score-main-table span,
+html body #score-main-table input {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+}
+
     /* ========================================================= */
     /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤 CSS               */
     /* ========================================================= */
