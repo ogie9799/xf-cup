@@ -1,4 +1,4 @@
-<!DOCTYPE html>ore-table
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -25,7 +25,6 @@
       font-weight: 900 !important;  /* 鎖死為最粗體，極度清晰 */
     }
 
-
     #main-container {
       display: flex;
       flex-direction: column;
@@ -51,22 +50,6 @@
       border-collapse: collapse;
       table-layout: fixed;
     }
-
-/* ==========================================================================
-   國標麻將幸福盃控台 - 針對 #score-main-table 終極剛性覆蓋
-   目的：直接擊穿 element.style 行內樣式與 126 個 font-size 惡意蓋寫
-   ========================================================================== */
-html body #score-main-table,
-html body #score-main-table th,
-html body #score-main-table td,
-html body #score-main-table tr,
-html body #score-main-table span {
-    font-size: 19px !important;       /* 強制拉大，擊穿行內樣式的 15px */
-    font-weight: 900 !important;       /* 剛性粗體，對齊 LINE 版 */
-    line-height: 1.1 !important;       /* 緊湊行高 */
-    padding: 4px 2px !important;       /* 強制覆蓋原本的 padding: 0 !important */
-}
-
 
     /* ========================================================= */
     /* 第 2 部分：吸頂位置鋼骨校正與大數字鍵盤 CSS               */
@@ -423,7 +406,7 @@ html body #score-main-table span {
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026幸福盃國標麻將隊制賽
+              2026上半年度國標冠軍賽
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
