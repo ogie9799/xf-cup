@@ -1957,51 +1957,5 @@
     });
     window.addEventListener("resize", adjustMobileVh);
   </script>
-<!-- ==========================================================================
-   國標麻將幸福盃控台 - 分數色彩剛性分流（正分/0 變藍、負分變紅）
-   ========================================================================== -->
-<script>
-(function() {
-    function safeScoreColor() {
-        // 1. ⚡ 精準盲抓：只針對可能放「得分」的 input 和 td 進行染色，防禦性極高
-        const elements = document.querySelectorAll('#score-main-table td, #score-main-table input');
-        
-        elements.forEach(el => {
-            // 取得格子或輸入框內的值，並清除前後空白
-            let rawText = (el.tagName === 'INPUT') ? el.value : el.innerText;
-            if (!rawText) return;
-            
-            let text = rawText.trim().replace('+', '');
-            
-            // 2. ⚡ 剛性安全過濾網：如果文字包含斜線/、局、桌、或非純數字，100% 絕對跳過不處理！
-            // 這能完美防止阻斷歷史紀錄、日期（2026/06/06）與盤次的讀取腳本
-            if (text.includes('/') || text.includes('局') || text.includes('桌') || text.includes('上') || text.includes('下')) {
-                return; 
-            }
-            
-            // 3. 確定是純數字（得分）才發動色彩剛性洗牌
-            if (text !== "" && !isNaN(text) && /^-?\d+(\.\d+)?$/.test(text)) {
-                let score = parseFloat(text);
-                
-                if (score >= 0) {
-                    // 大於等於 0：強制染成高辨識度正藍色
-                    el.style.setProperty('color', '#0022FF', 'important'); 
-                    el.style.setProperty('font-weight', '900', 'important');
-                } else {
-                    // 小於 0：強制染成高辨識度正紅色
-                    el.style.setProperty('color', '#FF0000', 'important');
-                    el.style.setProperty('font-weight', '900', 'important');
-                }
-            }
-        });
-    }
-
-    // 網頁載入與後續非同步更新時，每 600 毫秒安全巡邏巡視一次
-    safeScoreColor();
-    setInterval(safeScoreColor, 600);
-})();
-</script>
-
-
 </body>
 </html>
