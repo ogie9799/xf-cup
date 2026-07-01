@@ -2031,40 +2031,43 @@ html body #score-main-table tr:nth-child(1) th {
    ========================================================================== -->
 <script>
 window.addEventListener('DOMContentLoaded', () => {
-    function ultimateDateWidth() {
+    function centerAndFixDate() {
         const allElements = document.querySelectorAll('#score-main-table input, #score-main-table span, #score-main-table td, #score-main-table th');
         
         allElements.forEach(el => {
-            // 盲抓任何包含 2026 或相關的日期格子
             if (el.innerText.includes('2026') || (el.value && el.value.includes('2026')) || el.id === 'date' || el.className.includes('date')) {
                 
-                // 1. ⚡ 寬度再加碼：從 95px 剛性拉大到 105px，提供絕對充足的字元空間
+                // 1. ⚡ 寬度與邊界調整，維持充足空間
                 el.style.setProperty('width', '105px', 'important');
                 el.style.setProperty('min-width', '105px', 'important');
                 el.style.setProperty('max-width', '105px', 'important');
                 
-                // 2. ⚡ 字距極限壓縮：從 -1.5px 壓榨到 -1.8px，讓數字排得更緊密
-                el.style.setProperty('letter-spacing', '-1.8px', 'important'); 
+                // 2. ⚡ 核心校正：強制文字水平置中，破除偏右偏差
+                el.style.setProperty('text-align', 'center', 'important');
+                el.style.setProperty('margin', '0 auto', 'important');
+                el.style.setProperty('display', 'inline-block', 'important');
                 
-                // 3. ⚡ 字型微調：稍微降到 12px，確保在 LINE 窄畫面上絕對不爆格
-                el.style.setProperty('font-size', '12px', 'important');
+                // 3. 微調字距與字型，保持 8 碼清晰度
+                el.style.setProperty('letter-spacing', '-1.2px', 'important'); /* 稍微放寬 0.6px，防止文字太緊偏一邊 */
+                el.style.setProperty('font-size', '13px', 'important');        /* 稍微放大到 13px，網址版看起來更清晰 */
                 el.style.setProperty('white-space', 'nowrap', 'important');
                 
-                // 4. 強制父層格子同步擴張，並將左右留白完全歸零
+                // 4. 強制父層格子同步置中對齊
                 if (el.parentElement) {
                     el.parentElement.style.setProperty('width', '105px', 'important');
                     el.parentElement.style.setProperty('min-width', '105px', 'important');
                     el.parentElement.style.setProperty('max-width', '105px', 'important');
                     el.parentElement.style.setProperty('padding', '4px 0px', 'important');
+                    el.parentElement.style.setProperty('text-align', 'center', 'important');
                 }
             }
         });
     }
 
-    // 連續發動三次剛性轟炸，確保徹底洗牌成功
-    ultimateDateWidth();
-    setTimeout(ultimateDateWidth, 200);
-    setTimeout(ultimateDateWidth, 600);
+    // 連續發動三次剛性置中轟炸
+    centerAndFixDate();
+    setTimeout(centerAndFixDate, 200);
+    setTimeout(centerAndFixDate, 600);
 });
 </script>
 
