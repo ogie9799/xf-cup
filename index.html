@@ -799,10 +799,17 @@
      * 跨網域 POST 通訊核心發動機
      */
 function callBackendAPI(action, payload, successCallback, failureCallback) {
-  fetch(BACKEND_API_URL, {
+  var cleanUrl = BACKEND_API_URL;
+  if (cleanUrl.endsWith("/exec/exec")) {
+    cleanUrl = cleanUrl.substring(0, cleanUrl.length - 5);
+  } else if (cleanUrl.endsWith("/exec/doPost")) {
+    cleanUrl = cleanUrl.substring(0, cleanUrl.length - 7);
+  }
+
+  fetch(cleanUrl, {
     method: "POST",
-    mode: "cors", // 啟用跨網域放行
-    headers: { "Content-Type": "text/plain" }, // 使用平鋪文字避開部分手機瀏覽器的預檢阻擋
+    mode: "cors",
+    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({ action: action, payload: payload })
   })
   .then(function(res) { return res.json(); })
