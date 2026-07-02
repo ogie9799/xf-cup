@@ -798,17 +798,32 @@
     /**
      * 跨網域 POST 通訊核心發動機
      */
-    function callBackendAPI(action, payload, successCallback, failureCallback) {
-      fetch(BACKEND_API_URL, {
-        method: "POST",
-        mode: "cors",
-        redirect: "follow",
-        body: JSON.stringify({ action: action, payload: payload })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) { successCallback(data); })
-      .catch(function(err) { failureCallback(err); });
-    }
+   function callBackendAPI(action, payload, successCallback, failureCallback) {
+  var callbackName = 'gas_cb_' + Math.round(100000 * Math.random());
+  window[callbackName] = function(data) {
+    if (successCallback) successCallback(data);
+    delete window[callbackName];
+    var oldScript = document.getElementById(scriptId);
+    if (oldScript) oldScript.remove();
+  };
+
+  var scriptId = 'gas_script_' + callbackName;
+  var srcUrl = BACKEND_API_URL + '?action=' + encodeURIComponent(action) + 
+               '&payload=' + encodeURIComponent(JSON.stringify(payload)) + 
+               '&callback=' + callbackName;
+
+  var script = document.createElement('script');
+  script.id = scriptId;
+  script.src = srcUrl;
+  script.onerror = function() {
+    if (failureCallback) failureCallback('網路連線失敗');
+    delete window[callbackName];
+    script.remove();
+  };
+
+  document.body.appendChild(script);
+}
+
 
     /**
      * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
