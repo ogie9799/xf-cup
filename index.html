@@ -777,6 +777,30 @@
   <script>
     // 說明：跨網域 API 節點配置，重新部署 GAS 網頁應用程式後取得的實體網址
     var BACKEND_API_URL = "https://script.google.com/macros/s/AKfycbwMrIGHy37-awMCchfPPqJuW3mfY1A62z0Nc4lg3wLeh9tNErEhYen_zxxJu01XB2Fx/exec";
+// 🌐 跨平台手機/電腦全攔截剛性排毒盾牌
+(function() {
+  var originalFetch = window.fetch;
+  window.fetch = function(input, init) {
+var url = typeof input === 'string' ? input : (input.url || "");
+    
+    // 🔴 只要發現訊號是要連去 Google Apps Script 的
+    if (url.indexOf("://google.com") !== -1) {
+      // 1. 自動網址排毒，防止任何地方多黏了 /exec 或 doPost
+      var cleanUrl = BACKEND_API_URL;
+      if (cleanUrl.endsWith("/exec/exec")) cleanUrl = cleanUrl.substring(0, cleanUrl.length - 5);
+      if (cleanUrl.endsWith("/exec/doPost")) cleanUrl = cleanUrl.substring(0, cleanUrl.length - 7);
+      
+      input = cleanUrl;
+      
+      // 2. 強制注入最健康的 CORS 跨平台手機放行設定，不管別的地方怎麼亂寫，通通以此為準！
+      init = init || {};
+      init.method = "POST";
+      init.mode = "cors";
+      init.headers = { "Content-Type": "text/plain" };
+    }
+    return originalFetch.call(this, input, init);
+  };
+})();
 
     // 全域選手名單前端快取與非同步狀態鎖，徹底封印閃現與蓋寫錯誤
     var playerDatabaseCache = {};
