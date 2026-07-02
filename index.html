@@ -798,31 +798,18 @@
     /**
      * 跨網域 POST 通訊核心發動機
      */
-   function callBackendAPI(action, payload, successCallback, failureCallback) {
-  var callbackName = 'gas_cb_' + Math.round(100000 * Math.random());
-  window[callbackName] = function(data) {
-    if (successCallback) successCallback(data);
-    delete window[callbackName];
-    var oldScript = document.getElementById(scriptId);
-    if (oldScript) oldScript.remove();
-  };
-
-  var scriptId = 'gas_script_' + callbackName;
-  var srcUrl = BACKEND_API_URL + '?action=' + encodeURIComponent(action) + 
-               '&payload=' + encodeURIComponent(JSON.stringify(payload)) + 
-               '&callback=' + callbackName;
-
-  var script = document.createElement('script');
-  script.id = scriptId;
-  script.src = srcUrl;
-  script.onerror = function() {
-    if (failureCallback) failureCallback('網路連線失敗');
-    delete window[callbackName];
-    script.remove();
-  };
-
-  document.body.appendChild(script);
+function callBackendAPI(action, payload, successCallback, failureCallback) {
+  fetch(BACKEND_API_URL, {
+    method: "POST",
+    mode: "cors", // 啟用跨網域放行
+    headers: { "Content-Type": "text/plain" }, // 使用平鋪文字避開部分手機瀏覽器的預檢阻擋
+    body: JSON.stringify({ action: action, payload: payload })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) { if (successCallback) successCallback(data); })
+  .catch(function(err) { if (failureCallback) failureCallback(err); });
 }
+
 
 
     /**
