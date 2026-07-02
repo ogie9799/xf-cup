@@ -845,6 +845,7 @@ var url = typeof input === 'string' ? input : (input.url || "");
      * 跨網域 POST 通訊核心發動機
      */
 function callBackendAPI(action, payload, successCallback, failureCallback) {
+  // 🔴 終極直連：拋棄變數，直接將 Google 的實體地址寫在這裡，全宇宙絕對不可能指錯路！
   var targetUrl = "https://google.com";
 
   fetch(targetUrl, {
@@ -857,6 +858,7 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
   .then(function(data) { if (successCallback) successCallback(data); })
   .catch(function(err) { if (failureCallback) failureCallback(err); });
 }
+
 
     /**
      * 💡 模糊搜尋智能版：完全保留模糊搜尋！移除了導致手機卡死的快取鎖，讓點選更順暢
