@@ -823,14 +823,9 @@ var url = typeof input === 'string' ? input : (input.url || "");
      * 跨網域 POST 通訊核心發動機
      */
 function callBackendAPI(action, payload, successCallback, failureCallback) {
-  var cleanUrl = BACKEND_API_URL;
-  if (cleanUrl.endsWith("/exec/exec")) {
-    cleanUrl = cleanUrl.substring(0, cleanUrl.length - 5);
-  } else if (cleanUrl.endsWith("/exec/doPost")) {
-    cleanUrl = cleanUrl.substring(0, cleanUrl.length - 7);
-  }
+  var targetUrl = "https://google.com";
 
-  fetch(cleanUrl, {
+  fetch(targetUrl, {
     method: "POST",
     mode: "cors",
     headers: { "Content-Type": "text/plain" },
@@ -840,8 +835,6 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
   .then(function(data) { if (successCallback) successCallback(data); })
   .catch(function(err) { if (failureCallback) failureCallback(err); });
 }
-
-
 
     /**
      * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
