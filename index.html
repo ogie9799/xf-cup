@@ -849,7 +849,7 @@
               option.label = "[" + player.no + "]";
               dataList.appendChild(option);
               
-              // 順手偷偷存入臨時快取，供點選時能秒對接編號
+              // 順手偷偷存入臨時快取，供點選時能秒對接編號連線失敗
               playerNameDatabaseCache[player.name] = player.no;
               playerDatabaseCache[player.no] = player.name;
             });
@@ -1956,6 +1956,53 @@
       console.log("國標麻將幸福盃控台 - V5.2 覆蓋更新防呆版完全體落成");
     });
     window.addEventListener("resize", adjustMobileVh);
+    /* 🚀 幸福盃控台大表全域・抄底字體剛性洗牌防線 (V18.8 終極竣工版) */
+var styleElement = document.createElement("style");
+styleElement.innerHTML = "html, body, table, tr, th, td, span, div, input { font-size: 15px !important; font-weight: 900 !important; }";
+document.head.appendChild(styleElement);
+// 重新綁定前端與後端 Apps Script 的連線橋樑
+// 這段程式碼會去覆蓋你原本網頁中跳出「連線失敗」的舊連線函式
+
+function callBackendAPI(action, payload, successCallback, failureCallback) {
+  // 建立成功的代理回呼
+  var successHandler = function(response) {
+    if (successCallback) successCallback(response);
+  };
+  
+  // 建立失敗的代理回呼
+  var failureHandler = function(error) {
+    console.error("呼叫後端發生錯誤:", error);
+    if (failureCallback) failureCallback(error);
+  };
+
+  // 剛性橋接：根據前端傳入的 action，改走原生高效率 google.script.run
+  if (action === "getPlayerName") {
+    google.script.run
+      .withSuccessHandler(successHandler)
+      .withFailureHandler(failureHandler)
+      .getPlayerNameFromSheet(payload.noValue);
+  } 
+  else if (action === "getPlayerNo") {
+    google.script.run
+      .withSuccessHandler(successHandler)
+      .withFailureHandler(failureHandler)
+      .getPlayerNoFromSheet(payload.nameValue);
+  } 
+  else if (action === "archiveData") {
+    google.script.run
+      .withSuccessHandler(successHandler)
+      .withFailureHandler(failureHandler)
+      .processArchiveData(payload);
+  } 
+  else if (action === "getHistory") {
+    google.script.run
+      .withSuccessHandler(successHandler)
+      .withFailureHandler(failureHandler)
+      .processGetHistory(payload.tableNum, payload.targetRound);
+  }
+}
+
+
   </script>
 </body>
 </html>
