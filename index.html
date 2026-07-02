@@ -859,90 +859,65 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
 }
 
     /**
-     * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
+     * 💡 模糊搜尋智能版：完全保留模糊搜尋！移除了導致手機卡死的快取鎖，讓點選更順暢
      */
     function handlePlayerNameInput(seatIndex) {
       var nameValue = document.getElementById("setup-p" + seatIndex + "-name").value.trim();
       var noField = document.getElementById("setup-p" + seatIndex + "-no");
-      var dataList = document.getElementById("list-p" + seatIndex); // 抓取隱形清單箱子
-      
-      var queryId = Date.now() + "_" + Math.random();
-      activeQueries["name_" + seatIndex] = queryId;
+      var dataList = document.getElementById("list-p" + seatIndex); 
 
       if (!nameValue) {
-        if (dataList) dataList.innerHTML = ""; // 清空選單
-        return;
-      }
-      
-      // 💡 核心聯動防呆：如果使用者剛好輸入了完整的全名（完全命中快取），秒出編號並清空下拉選單
-      if (playerNameDatabaseCache[nameValue]) {
-        noField.value = playerNameDatabaseCache[nameValue];
         if (dataList) dataList.innerHTML = ""; 
         return;
       }
       
       callBackendAPI("getPlayerNo", { nameValue: nameValue }, function(res) {
-        if (activeQueries["name_" + seatIndex] !== queryId) return; 
-        
-        if (dataList) dataList.innerHTML = ""; // 先清空舊的條列選項
+        if (dataList) dataList.innerHTML = ""; 
         
         if (res && res.success) {
           if (res.isList && res.list && res.list.length > 0) {
             
-            // 💡 狀況一：後端吐回了多筆符合條件的模糊清單，動態渲染成 `<option>` 塞入下拉選單
+            // 🟢 完美保留：動態渲染成 <option> 塞入下拉選單供點選
             res.list.forEach(function(player) {
               var option = document.createElement("option");
-              // value 設為全名，label 顯示編號，這樣點選時會自動將全名填入姓名框
               option.value = player.name;
               option.label = "[" + player.no + "]";
               dataList.appendChild(option);
               
-              // 順手偷偷存入臨時快取，供點選時能秒對接編號連線失敗
+              // 偷偷把對照存在全域，讓裁判點選名字時，編號能立刻自動連動
               playerNameDatabaseCache[player.name] = player.no;
               playerDatabaseCache[player.no] = player.name;
             });
             
-            // 💡 智慧聯動：如果模糊搜尋結果「剛好只有 1 個人符合」，不讓裁判多選，直接幫他把編號填進去！
+            // 🟢 完美保留：如果模糊搜尋結果「剛好只有 1 個人符合」，直接幫他把編號填進去！
             if (res.list.length === 1) {
               noField.value = res.list[0].no;
               noField.placeholder = "選手編號";
             } else {
               noField.placeholder = "請由清單點選...";
             }
-            
           }
         } else {
           noField.placeholder = "無官方編號";
         }
       }, function() {
-        if (activeQueries["name_" + seatIndex] !== queryId) return;
         noField.placeholder = "連線失敗";
       });
     }
+
     /**
-     * 監聽選手編號輸入：V5 原子鎖機制（完全改採 Fetch 跨網域異步比對）
+     * 監聽選手編號輸入：🔴 徹底拆除卡死手機的快取鎖，輸入編號直連後端大復活
      */
     function handlePlayerNoInput(seatIndex) {
       var noValue = document.getElementById("setup-p" + seatIndex + "-no").value.trim();
       var nameField = document.getElementById("setup-p" + seatIndex + "-name");
       
-      var queryId = Date.now() + "_" + Math.random();
-      activeQueries[seatIndex] = queryId;
-
-      if (!noValue) {
-        return;
-      }
-      
-      if (playerDatabaseCache[noValue]) {
-        nameField.value = playerDatabaseCache[noValue];
-        return;
-      }
+      if (!noValue) return;
       
       nameField.value = "查詢中...";
       
+      // 剛性放行：無條件去向 Google Sheets 敲門要名字
       callBackendAPI("getPlayerName", { noValue: noValue }, function(res) {
-        if (activeQueries[seatIndex] !== queryId) return; 
-        
         if (res && res.success && res.name) {
           nameField.value = res.name;
           playerDatabaseCache[noValue] = res.name;
@@ -950,17 +925,17 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
         } else {
           nameField.value = "查無此選手";
           setTimeout(function() {
-            if (document.getElementById("setup-p" + seatIndex + "-no").value.trim() === noValue && nameField.value === "查無此選手") {
+            if (nameField.value === "查無此選手") {
               nameField.value = "";
               nameField.placeholder = "請手動輸入姓名";
             }
           }, 1200);
         }
       }, function() {
-        if (activeQueries[seatIndex] !== queryId) return;
         nameField.value = "連線失敗";
       });
     }
+
 
     /**
      * 輔助函數：將選手姓名剛性轉化為上下排各兩個字的 2x2 格式
