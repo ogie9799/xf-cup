@@ -1105,28 +1105,28 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
             }
 
             // 填入衛冕者、分差、自摸、對點、旁點
-            htmlBuffer += '<td style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; color: #fff; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #FF4D4D; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #FFAA00; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
-                          '<td style="border: 1px solid #444; padding: 3px 2px; color: #2ECC71; font-weight: 900; font-size: 15px; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
-                          '</tr>';
+             htmlBuffer += '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFF; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FF4D4D; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFAA00; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #2ECC71; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
+                  '</tr>';
+
           }
         });
 
         return htmlBuffer;
       };
 
-      // 4. 生成大一統全屏鋼骨網格主結構
-      return '<div style="background-color: #1A1A1A; color: white; padding: 6px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box !important; font-size: 13px; overflow: hidden;">' +
-             
-             '<div style="margin-bottom: 6px; width: 100%; box-sizing: border-box !important;">' +
-             '<table style="width: 98% !important; margin: 0 auto !important; border-collapse: collapse; border: 1.5px solid #444; table-layout: fixed; box-sizing: border-box !important;">' +
-             '<colgroup><col style="width:24%"><col style="width:24%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>' +
-             '<thead>' +
-             '<tr style="background-color: #2D3748; font-size: 13px; color: #FFF; height: 24px;">' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; background-color:#111;">挑戰者</th>' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFF2CC;">衛冕者</th>' +
+       // 4. 生成大一塊全套戰術網絡表格結構
+  return '<div style="background-color: #1A1A1A; color: white; padding: 4px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box !important; font-size: 12px; overflow: hidden;">' +
+    '<div style="margin-bottom: 6px; width: 100%; box-sizing: border-box !important;">' +
+    '<table style="width: 100% !important; margin: 0 auto !important; border-collapse: collapse; border: 1.5px solid #444; table-layout: auto !important; text-align: center !important;">' +
+    '<colgroup><col style="width:22%"><col style="width:22%"><col style="width:14%"><col style="width:14%"><col style="width:14%"><col style="width:14%"></colgroup>' +
+    '<thead>' +
+    '<tr style="background-color: #2D3748; font-size: 12px; color: #FFF; height: 26px;">' +
+    '<th style="padding: 4px 2px; border: 1px solid #444; background-color:#111;">挑戰</th>' +
+    '<th style="padding: 4px 2px; border: 1px solid #444; background-color:#FF6666;">衛冕</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #e2e8f0;">分差</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #FF6666;">自摸</th>' +
              '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFCC66;">對點</th>' +
