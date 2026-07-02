@@ -781,6 +781,28 @@
 (function() {
   var originalFetch = window.fetch;
   window.fetch = function(input, init) {
+    var url = typeof input === 'string' ? input : (input.url || "");
+    
+    // 🔴 只要發現訊號是要連去 Google Apps Script 的
+    if (url.indexOf("://google.com") !== -1) {
+      // 剛性對齊 100% 正確的 Google 後端網址，不管前段在哪裡亂黏 exec 通通洗掉
+      input = "https://://google.com/macros/s/AKfycbwMriGHy37-awNCchFPPaUuk3mFY1A62z0Nc41gXLeN9tNEREnYm_zxx2u01XB2Fx/exec";
+      
+      // 強制注入最健康的 CORS 跨平台手機放行設定，不管別的地方怎麼亂寫，通通以此為準！
+      init = init || {};
+      init.method = "POST";
+      init.mode = "cors";
+      init.headers = { "Content-Type": "text/plain" };
+    }
+    return originalFetch.call(this, input, init);
+  };
+})();
+
+    
+    // 🌐 跨平台手機/電腦全攔截剛性排毒盾牌
+(function() {
+  var originalFetch = window.fetch;
+  window.fetch = function(input, init) {
 var url = typeof input === 'string' ? input : (input.url || "");
     
     // 🔴 只要發現訊號是要連去 Google Apps Script 的
