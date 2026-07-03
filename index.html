@@ -1976,10 +1976,20 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
     });
     window.addEventListener("resize", adjustMobileVh);
     /* 🚀 幸福盃控台大表全域・抄底字體剛性洗牌防線 (V18.8 終極竣工版) */
+    /* 🚀 幸福盃控台大表全域・抄底字體剛性洗牌防線 (V19.0 GitHub 特赦版) */
     var styleElement = document.createElement("style");
-    // ✅ 修正後：保留原本最粗最狂的 15px 滿版大字體，只把 #top-date-display（日期）單獨微縮到 11px
-    styleElement.innerHTML = "html, body, table, tr, th, td, span, div, input { font-size: 15px !important; font-weight: 900 !important; } #top-date-display { font-size: 11px !important; }";
+    styleElement.innerHTML = `
+      html, body, table, tr, th, td, span:not(#top-date-display), div, input { 
+        font-size: 15px !important; 
+        font-weight: 900 !important; 
+      } 
+      #top-date-display { 
+        font-size: 11px !important; 
+        font-weight: 900 !important; 
+      }
+    `;
     document.head.appendChild(styleElement);
+
 
 
 // 重新綁定前端與後端 Apps Script 的連線橋樑
