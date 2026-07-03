@@ -390,6 +390,15 @@
       font-size: 13px;
       cursor: pointer;
     }
+    /* 🚀 幸福盃終極防線：強迫日期標籤在手機上完美並排顯示 8 碼 */
+    #top-date-display {
+      font-size: 11px !important;       /* 微調字體至 11px，保證塞得進 20% 的格子 */
+      font-weight: 900 !important;      /* 維持原設計最醒目的極粗體 */
+      white-space: nowrap !important;   /* 網頁絕對剛性防線：絕對不允許文字自動換行 */
+      display: inline-block !important; /* 允許文字橫向平鋪流暢展開 */
+      letter-spacing: -0.5px !important;/* 稍微縮小數位間距，防手機邊緣吃字 */
+    }
+
   </style>
 </head>
 <body>
@@ -406,7 +415,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026上半年度國標冠軍賽
+              2026下半年度國標個人賽14
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -777,52 +786,6 @@
   <script>
     // 說明：跨網域 API 節點配置，重新部署 GAS 網頁應用程式後取得的實體網址
     var BACKEND_API_URL = "https://script.google.com/macros/s/AKfycbwMrIGHy37-awMCchfPPqJuW3mfY1A62z0Nc4lg3wLeh9tNErEhYen_zxxJu01XB2Fx/exec";
-// 🌐 跨平台手機/電腦全攔截剛性排毒盾牌
-(function() {
-  var originalFetch = window.fetch;
-  window.fetch = function(input, init) {
-    var url = typeof input === 'string' ? input : (input.url || "");
-    
-    // 🔴 只要發現訊號是要連去 Google Apps Script 的
-    if (url.indexOf("://google.com") !== -1) {
-      // 剛性對齊 100% 正確的 Google 後端網址，不管前段在哪裡亂黏 exec 通通洗掉
-      input = "https://://google.com/macros/s/AKfycbwMriGHy37-awNCchFPPaUuk3mFY1A62z0Nc41gXLeN9tNEREnYm_zxx2u01XB2Fx/exec";
-      
-      // 強制注入最健康的 CORS 跨平台手機放行設定，不管別的地方怎麼亂寫，通通以此為準！
-      init = init || {};
-      init.method = "POST";
-      init.mode = "cors";
-      init.headers = { "Content-Type": "text/plain" };
-    }
-    return originalFetch.call(this, input, init);
-  };
-})();
-
-    
-    // 🌐 跨平台手機/電腦全攔截剛性排毒盾牌
-(function() {
-  var originalFetch = window.fetch;
-  window.fetch = function(input, init) {
-var url = typeof input === 'string' ? input : (input.url || "");
-    
-    // 🔴 只要發現訊號是要連去 Google Apps Script 的
-    if (url.indexOf("://google.com") !== -1) {
-      // 1. 自動網址排毒，防止任何地方多黏了 /exec 或 doPost
-      var cleanUrl = BACKEND_API_URL;
-      if (cleanUrl.endsWith("/exec/exec")) cleanUrl = cleanUrl.substring(0, cleanUrl.length - 5);
-      if (cleanUrl.endsWith("/exec/doPost")) cleanUrl = cleanUrl.substring(0, cleanUrl.length - 7);
-      
-      input = cleanUrl;
-      
-      // 2. 強制注入最健康的 CORS 跨平台手機放行設定，不管別的地方怎麼亂寫，通通以此為準！
-      init = init || {};
-      init.method = "POST";
-      init.mode = "cors";
-      init.headers = { "Content-Type": "text/plain" };
-    }
-    return originalFetch.call(this, input, init);
-  };
-})();
 
     // 全域選手名單前端快取與非同步狀態鎖，徹底封印閃現與蓋寫錯誤
     var playerDatabaseCache = {};
@@ -844,82 +807,103 @@ var url = typeof input === 'string' ? input : (input.url || "");
     /**
      * 跨網域 POST 通訊核心發動機
      */
-function callBackendAPI(action, payload, successCallback, failureCallback) {
-  // 🔴 終極直連：拋棄變數，直接將 Google 的實體地址寫在這裡，全宇宙絕對不可能指錯路！
-  var targetUrl = "https://script.google.com/macros/s/AKfycbwMrIGHy37-awMCchfPPqJuW3mfY1A62z0Nc4lg3wLeh9tNErEhYen_zxxJu01XB2Fx/exec";
-
-  fetch(targetUrl, {
-    method: "POST",
-    mode: "cors",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify({ action: action, payload: payload })
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) { if (successCallback) successCallback(data); })
-  .catch(function(err) { if (failureCallback) failureCallback(err); });
-}
-
+    function callBackendAPI(action, payload, successCallback, failureCallback) {
+      fetch(BACKEND_API_URL, {
+        method: "POST",
+        mode: "cors",
+        redirect: "follow",
+        body: JSON.stringify({ action: action, payload: payload })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) { successCallback(data); })
+      .catch(function(err) { failureCallback(err); });
+    }
 
     /**
-     * 💡 模糊搜尋智能版：完全保留模糊搜尋！移除了導致手機卡死的快取鎖，讓點選更順暢
+     * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
      */
     function handlePlayerNameInput(seatIndex) {
       var nameValue = document.getElementById("setup-p" + seatIndex + "-name").value.trim();
       var noField = document.getElementById("setup-p" + seatIndex + "-no");
-      var dataList = document.getElementById("list-p" + seatIndex); 
+      var dataList = document.getElementById("list-p" + seatIndex); // 抓取隱形清單箱子
+      
+      var queryId = Date.now() + "_" + Math.random();
+      activeQueries["name_" + seatIndex] = queryId;
 
       if (!nameValue) {
+        if (dataList) dataList.innerHTML = ""; // 清空選單
+        return;
+      }
+      
+      // 💡 核心聯動防呆：如果使用者剛好輸入了完整的全名（完全命中快取），秒出編號並清空下拉選單
+      if (playerNameDatabaseCache[nameValue]) {
+        noField.value = playerNameDatabaseCache[nameValue];
         if (dataList) dataList.innerHTML = ""; 
         return;
       }
       
       callBackendAPI("getPlayerNo", { nameValue: nameValue }, function(res) {
-        if (dataList) dataList.innerHTML = ""; 
+        if (activeQueries["name_" + seatIndex] !== queryId) return; 
+        
+        if (dataList) dataList.innerHTML = ""; // 先清空舊的條列選項
         
         if (res && res.success) {
           if (res.isList && res.list && res.list.length > 0) {
             
-            // 🟢 完美保留：動態渲染成 <option> 塞入下拉選單供點選
+            // 💡 狀況一：後端吐回了多筆符合條件的模糊清單，動態渲染成 `<option>` 塞入下拉選單
             res.list.forEach(function(player) {
               var option = document.createElement("option");
+              // value 設為全名，label 顯示編號，這樣點選時會自動將全名填入姓名框
               option.value = player.name;
               option.label = "[" + player.no + "]";
               dataList.appendChild(option);
               
-              // 偷偷把對照存在全域，讓裁判點選名字時，編號能立刻自動連動
+              // 順手偷偷存入臨時快取，供點選時能秒對接編號連線失敗
               playerNameDatabaseCache[player.name] = player.no;
               playerDatabaseCache[player.no] = player.name;
             });
             
-            // 🟢 完美保留：如果模糊搜尋結果「剛好只有 1 個人符合」，直接幫他把編號填進去！
+            // 💡 智慧聯動：如果模糊搜尋結果「剛好只有 1 個人符合」，不讓裁判多選，直接幫他把編號填進去！
             if (res.list.length === 1) {
               noField.value = res.list[0].no;
               noField.placeholder = "選手編號";
             } else {
               noField.placeholder = "請由清單點選...";
             }
+            
           }
         } else {
           noField.placeholder = "無官方編號";
         }
       }, function() {
+        if (activeQueries["name_" + seatIndex] !== queryId) return;
         noField.placeholder = "連線失敗";
       });
     }
-
     /**
-     * 監聽選手編號輸入：🔴 徹底拆除卡死手機的快取鎖，輸入編號直連後端大復活
+     * 監聽選手編號輸入：V5 原子鎖機制（完全改採 Fetch 跨網域異步比對）
      */
     function handlePlayerNoInput(seatIndex) {
       var noValue = document.getElementById("setup-p" + seatIndex + "-no").value.trim();
       var nameField = document.getElementById("setup-p" + seatIndex + "-name");
       
-      if (!noValue) return;
+      var queryId = Date.now() + "_" + Math.random();
+      activeQueries[seatIndex] = queryId;
+
+      if (!noValue) {
+        return;
+      }
+      
+      if (playerDatabaseCache[noValue]) {
+        nameField.value = playerDatabaseCache[noValue];
+        return;
+      }
       
       nameField.value = "查詢中...";
       
-      // 剛性放行：無條件去向 Google Sheets 敲門要名字
       callBackendAPI("getPlayerName", { noValue: noValue }, function(res) {
+        if (activeQueries[seatIndex] !== queryId) return; 
+        
         if (res && res.success && res.name) {
           nameField.value = res.name;
           playerDatabaseCache[noValue] = res.name;
@@ -927,17 +911,17 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
         } else {
           nameField.value = "查無此選手";
           setTimeout(function() {
-            if (nameField.value === "查無此選手") {
+            if (document.getElementById("setup-p" + seatIndex + "-no").value.trim() === noValue && nameField.value === "查無此選手") {
               nameField.value = "";
               nameField.placeholder = "請手動輸入姓名";
             }
           }, 1200);
         }
       }, function() {
+        if (activeQueries[seatIndex] !== queryId) return;
         nameField.value = "連線失敗";
       });
     }
-
 
     /**
      * 輔助函數：將選手姓名剛性轉化為上下排各兩個字的 2x2 格式
@@ -971,7 +955,7 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
     function openSetupModal() {
       document.getElementById("setup-round-input").value = document.getElementById("top-round-display").innerText;
       
-      var curDateDisplay = document.getElementById("top-date-display").innerText;
+      var curDateDisplay = document.getElementById("top-date-display").innerText = "20260703";
       if (curDateDisplay.startsWith("026/")) {
         curDateDisplay = "2026" + curDateDisplay.substring(3);
       }
@@ -1104,12 +1088,12 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
               htmlBuffer += '<td rowspan="' + step.rows + '" style="border: 1px solid #444; padding: 3px 2px; font-size: 14px; font-weight: bold; background-color: #15171c; white-space: nowrap; vertical-align: middle;">' + step.p.name + badgeHtml + '</td>';
             }
 
-            // 填入衛冕者、分差、自摸、對點、旁點
-             htmlBuffer += '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
-                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFF; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
-                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FF4D4D; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
-                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #FFAA00; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
-                  '<td style="border: 1px solid #444; padding: 4px 2px; font-size: 12px; color: #2ECC71; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
+            // 💡 填入衛冕者、分差、自摸、對點、旁點
+    htmlBuffer += '<td style="border: 1px solid #444; padding: 4px 1px; font-size: 11px; color: #FFF2CC; white-space: nowrap; vertical-align: middle;">' + def.name + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 1px; font-size: 11px; color: #FFF; font-weight: bold; vertical-align: middle;">' + diff + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 1px; font-size: 11px; color: #FF4D4D; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 4) + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 1px; font-size: 11px; color: #FFAA00; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 2) + '</td>' +
+                  '<td style="border: 1px solid #444; padding: 4px 1px; font-size: 11px; color: #2ECC71; font-weight: 800; vertical-align: middle;">' + calcFan(diff, constant, 1) + '</td>' +
                   '</tr>';
 
           }
@@ -1118,21 +1102,23 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
         return htmlBuffer;
       };
 
-       // 4. 生成大一塊全套戰術網絡表格結構
-  return '<div style="background-color: #1A1A1A; color: white; padding: 4px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 100%; box-sizing: border-box !important; font-size: 12px; overflow: hidden;">' +
+          // 4. 生成大一塊全套戰術網絡表格結構 (加上 max-height 與 overflow-y 讓手機可以上下滑動看完整表格)
+   return '<div style="background-color: #1A1A1A; color: white; padding: 6px 3px; font-family: sans-serif; text-align: center; border-radius: 8px; width: 104% !important; margin-left: -2% !important; max-height: 82vh; overflow-y: auto !important; box-sizing: border-box !important; font-size: 11px;">' +
+
     '<div style="margin-bottom: 6px; width: 100%; box-sizing: border-box !important;">' +
     '<table style="width: 100% !important; margin: 0 auto !important; border-collapse: collapse; border: 1.5px solid #444; table-layout: auto !important; text-align: center !important;">' +
-    '<colgroup><col style="width:22%"><col style="width:22%"><col style="width:14%"><col style="width:14%"><col style="width:14%"><col style="width:14%"></colgroup>' +
+    '<colgroup><col style="width:20%"><col style="width:20%"><col style="width:15%"><col style="width:15%"><col style="width:15%"><col style="width:15%"></colgroup>' +
     '<thead>' +
-    '<tr style="background-color: #2D3748; font-size: 12px; color: #FFF; height: 26px;">' +
-    '<th style="padding: 4px 2px; border: 1px solid #444; background-color:#111;">挑戰</th>' +
-    '<th style="padding: 4px 2px; border: 1px solid #444; background-color:#FF6666;">衛冕</th>' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; color: #e2e8f0;">分差</th>' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; color: #FF6666;">自摸</th>' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; color: #FFCC66;">對點</th>' +
-             '<th style="padding: 2px 1px; border: 1px solid #444; color: #66FF99;">旁點</th>' +
-             '</tr>' +
-             '</thead>' +
+    '<tr style="background-color: #2D3748; font-size: 11px; color: #FFF; height: 26px;">' +
+    '<th style="padding: 4px 1px; border: 1px solid #444; background-color:#111;">挑戰</th>' +
+    '<th style="padding: 4px 1px; border: 1px solid #444; background-color:#FF6666;">衛冕</th>' +
+    '<th style="padding: 4px 1px; border: 1px solid #444;">分差</th>' +
+    '<th style="padding: 4px 1px; border: 1px solid #444;">自摸</th>' +
+    '<th style="padding: 4px 1px; border: 1px solid #444;">對點</th>' +
+    '<th style="padding: 4px 1px; border: 1px solid #444;">旁點</th>' +
+    '</tr>' +
+    '</thead>' +
+
              '<tbody>' + 
                renderMatrixRows(31, true) + 
                renderMatrixRows(32, false) + 
@@ -1222,13 +1208,12 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
      * 套用並建立本局
      */
     function applyAndBuildRound() {
-      var setupRound = document.getElementById("setup-round-input").value || "1";
-      var setupDate = document.getElementById("setup-date-input").value || "2026/06/06";
-      
-      var displayDate = setupDate;
-      if (displayDate.length === 10 && displayDate.startsWith("2")) {
-        displayDate = "0" + displayDate.substring(1);
-      }
+        var setupRound = document.getElementById("setup-round-input").value || "1";
+   var setupDate = document.getElementById("setup-date-input").value || "20260703";
+
+   // ✅ 修正後：拒絕任何 .substring 錯位裁切，保留完整的 8 碼數字
+   var displayDate = setupDate.replace(/[\r\n\t\/]/g, "").trim(); 
+
       
       document.getElementById("top-round-display").innerText = setupRound;
       document.getElementById("top-date-display").innerText = displayDate;
@@ -1556,7 +1541,7 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
         players: seatsData
       };
 
-      callBackendAPI("archiveData", { data: postData }, function(res) {
+     callBackendAPI("archiveData", postData, function(res) {
         hideLoadingOverlay();
         if (res && res.success) {
           alert("保存成功！[" + tableText + "] 的完整局序與 1~16 盤分數已永久實體寫入資料庫。");
@@ -1745,35 +1730,30 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
       document.getElementById("top-table-display").innerText = "第 " + data.tableNum + " 桌";
       document.getElementById("top-round-display").innerText = data.gameRound;
       
-      // 1. 安全撈取後端寫入的時間戳記字串
-      var rawDateStr = data.date ? data.date.toString().trim() : "2026/06/06";
-      var final8DigitDate = "20260606"; // 預設安全防線
-      
-      // 🟢 狀況一：如果是帶有斜線的標準字串 (如 2026/06/11 15:22:01)
-      if (rawDateStr.includes("/")) {
-        // 提取前 10 碼 "2026/06/11"，並硬核拔除所有斜線 "/"
-        var tempDate = rawDateStr.substring(0, 10);
-        final8DigitDate = tempDate.replace(/\//g, ""); // 完美轉化為 "20260611"
-      } 
-      // 🟢 狀況二：如果是美東時間或長串非標準格式 (如 Thu Jun 11 2026...)
-      else if (rawDateStr.includes(" ") || isNaN(rawDateStr)) {
-        var dateObj = new Date(rawDateStr);
-        if (!isNaN(dateObj.getTime())) {
-          var yyyy = dateObj.getFullYear();
-          var mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-          var dd = String(dateObj.getDate()).padStart(2, '0');
-          final8DigitDate = yyyy.toString() + mm + dd; // 剛性熔接成 "20260611"
-        }
-      } 
-      // 🟢 狀況三：如果本來就是乾淨的純數字，過濾非數字字元後直接保留
-      else {
-        final8DigitDate = rawDateStr.replace(/[^0-9]/g, "");
+   // // 1. 全自動排毒：無條件將任何雜亂格式洗成標準 8 碼 YYYYMMDD（如 20260703）
+    var rawDateStr = data.date ? data.date.toString().trim() : "";
+    var final8DigitDate = "20260703"; //  比賽今天日期的無敵保底防線
+
+    // 提取所有純數字
+    var pureDigits = rawDateStr.replace(/[^0-9]/g, "");
+    
+    if (pureDigits.length >= 8) {
+      // 狀況一：資料庫裡本來就有完整的 8 碼或包含時間，精準抓取前 8 碼
+      final8DigitDate = pureDigits.substring(0, 8);
+    } else if (pureDigits.length === 6) {
+      // 狀況二：如果因為之前的 Bug 導致資料庫裡不幸只存了 6 碼（如 202607），自動幫他補上今天的日子 03！
+      final8DigitDate = pureDigits + "03";
+    } else {
+      // 狀況三：如果日期格式包含了斜線或標準時區字串（例如 2026/07/03 或 Fri Jul 03 2026）
+      var dateObj = new Date(rawDateStr);
+      if (!isNaN(dateObj.getTime())) {
+        var yyyy = dateObj.getFullYear().toString();
+        var mm = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+        var dd = dateObj.getDate().toString().padStart(2, '0');
+        final8DigitDate = yyyy + mm + dd;
       }
-      
-      // 💡 大賽防禦：確保剛好 8 碼，防止後台萬一帶有其他殘留字元
-      if (final8DigitDate.length > 8) {
-        final8DigitDate = final8DigitDate.substring(0, 8);
-      }
+    }
+
       
       // 2. 實體將絕對工整、毫無爭議的 8 碼數字寫回狀態列
       document.getElementById("top-date-display").innerText = final8DigitDate;
@@ -1982,50 +1962,36 @@ function callBackendAPI(action, payload, successCallback, failureCallback) {
     });
     window.addEventListener("resize", adjustMobileVh);
     /* 🚀 幸福盃控台大表全域・抄底字體剛性洗牌防線 (V18.8 終極竣工版) */
-var styleElement = document.createElement("style");
-styleElement.innerHTML = "html, body, table, tr, th, td, span, div, input { font-size: 15px !important; font-weight: 900 !important; }";
-document.head.appendChild(styleElement);
+    var styleElement = document.createElement("style");
+    // ✅ 修正後：保留原本最粗最狂的 15px 滿版大字體，只把 #top-date-display（日期）單獨微縮到 11px
+    styleElement.innerHTML = "html, body, table, tr, th, td, span, div, input { font-size: 15px !important; font-weight: 900 !important; } #top-date-display { font-size: 11px !important; }";
+    document.head.appendChild(styleElement);
+
+
 // 重新綁定前端與後端 Apps Script 的連線橋樑
 // 這段程式碼會去覆蓋你原本網頁中跳出「連線失敗」的舊連線函式
 
 function callBackendAPI(action, payload, successCallback, failureCallback) {
-  // 建立成功的代理回呼
   var successHandler = function(response) {
     if (successCallback) successCallback(response);
   };
-  
-  // 建立失敗的代理回呼
   var failureHandler = function(error) {
     console.error("呼叫後端發生錯誤:", error);
     if (failureCallback) failureCallback(error);
   };
 
-  // 剛性橋接：根據前端傳入的 action，改走原生高效率 google.script.run
-  if (action === "getPlayerName") {
-    google.script.run
-      .withSuccessHandler(successHandler)
-      .withFailureHandler(failureHandler)
-      .getPlayerNameFromSheet(payload.noValue);
-  } 
-  else if (action === "getPlayerNo") {
-    google.script.run
-      .withSuccessHandler(successHandler)
-      .withFailureHandler(failureHandler)
-      .getPlayerNoFromSheet(payload.nameValue);
-  } 
-  else if (action === "archiveData") {
-    google.script.run
-      .withSuccessHandler(successHandler)
-      .withFailureHandler(failureHandler)
-      .processArchiveData(payload);
-  } 
-  else if (action === "getHistory") {
-    google.script.run
-      .withSuccessHandler(successHandler)
-      .withFailureHandler(failureHandler)
-      .processGetHistory(payload.tableNum, payload.targetRound);
-  }
+  // 🎯 全面改採 Web API 的標準 POST 通訊，徹底跟 google.script.run 說再見！
+  fetch(BACKEND_API_URL, {
+    method: "POST",
+    mode: "cors",
+    redirect: "follow",
+    body: JSON.stringify({ action: action, payload: payload })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) { successHandler(data); })
+  .catch(function(err) { failureHandler(err); });
 }
+
 
 
   </script>
