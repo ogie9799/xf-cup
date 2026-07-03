@@ -415,7 +415,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026下半年度國標個人賽21
+              2026下半年度國標個人賽22
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -807,17 +807,23 @@
     /**
      * 跨網域 POST 通訊核心發動機
      */
-    function callBackendAPI(action, payload, successCallback, failureCallback) {
-      fetch(BACKEND_API_URL, {
-        method: "POST",
-        mode: "cors",
-        redirect: "follow",
-        body: JSON.stringify({ action: action, payload: payload })
-      })
-      .then(function(res) { return res.json(); })
-      .then(function(data) { successCallback(data); })
-      .catch(function(err) { failureCallback(err); });
-    }
+ function callBackendAPI(action, payload, successCallback, failureCallback) {
+  // 🚀 幸福盃 GitHub 專用無敵穿透晶片：改採 GET 方式直接穿透網域防鎖牆，100% 保留全名秒聯動！
+  var url = BACKEND_API_URL + "?action=" + encodeURIComponent(action) + "&payload=" + encodeURIComponent(JSON.stringify(payload));
+  
+  fetch(url, {
+    method: "GET",
+    mode: "cors"
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (successCallback) successCallback(data);
+  })
+  .catch(function(err) {
+    console.error("連線發生錯誤:", err);
+    if (failureCallback) failureCallback(error); // 防禦保底，對齊原架構
+  });
+}
 
     /**
      * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
