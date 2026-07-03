@@ -415,7 +415,7 @@
         <thead>
           <tr class="sticky-header-row sticky-row-1">
             <th colspan="5" style="background-color: #1e3a8a; color: #ffffff; font-size: 15px; font-weight: bold; height: 42px; text-align: center; padding: 0; margin: 0; letter-spacing: 1px; border: 1px solid #cbd5e1;">
-              2026下半年度國標個人賽22
+              2026下半年度國標個人賽15
             </th>
           </tr>
           <!-- 主控列一：初始化、日期、局次、桌次變更、清空 -->
@@ -785,7 +785,7 @@
   </style>
   <script>
     // 說明：跨網域 API 節點配置，重新部署 GAS 網頁應用程式後取得的實體網址
-    var BACKEND_API_URL = "https://script.google.com/macros/s/AKfycbwMrIGHy37-awMCchfPPqJuW3mfY1A62z0Nc4lg3wLeh9tNErEhYen_zxxJu01XB2Fx/exec";
+    var BACKEND_API_URL = "https://script.google.com/macros/s/AKfycby-Q3MHuU4kvPjMuYeuEDmigeVog14bGDRHIN-nTVN3sHbDSxHHYUDgnxXCnwcC8hZN/exec";
 
     // 全域選手名單前端快取與非同步狀態鎖，徹底封印閃現與蓋寫錯誤
     var playerDatabaseCache = {};
@@ -807,23 +807,31 @@
     /**
      * 跨網域 POST 通訊核心發動機
      */
- function callBackendAPI(action, payload, successCallback, failureCallback) {
-  // 🚀 幸福盃 GitHub 專用無敵穿透晶片：改採 GET 方式直接穿透網域防鎖牆，100% 保留全名秒聯動！
-  var url = BACKEND_API_URL + "?action=" + encodeURIComponent(action) + "&payload=" + encodeURIComponent(JSON.stringify(payload));
+function callBackendAPI(action, payload, successCallback, failureCallback) {
+  // 🚀 世紀終極 JSONP 穿透晶片：100% 免疫所有 CORS 跨網域封鎖，徹底告別連線失敗！
+  var callbackName = "xf_cup_cb_" + Math.random().toString(36).substring(2);
   
-  fetch(url, {
-    method: "GET",
-    mode: "cors"
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) {
+  window[callbackName] = function(data) {
     if (successCallback) successCallback(data);
-  })
-  .catch(function(err) {
-    console.error("連線發生錯誤:", err);
-    if (failureCallback) failureCallback(error); // 防禦保底，對齊原架構
-  });
+    delete window[callbackName];
+    var cbElem = document.getElementById(callbackName);
+    if (cbElem) cbElem.remove();
+  };
+
+  var url = BACKEND_API_URL + "?action=" + encodeURIComponent(action) + 
+            "&payload=" + encodeURIComponent(JSON.stringify(payload)) + 
+            "&callback=" + callbackName;
+
+  var script = document.createElement("script");
+  script.id = callbackName;
+  script.src = url;
+  script.onerror = function() {
+    console.error("JSONP 連線發生錯誤");
+    if (failureCallback) failureCallback();
+  };
+  document.body.appendChild(script);
 }
+    }
 
     /**
      * 💡 模糊搜尋智能版：監聽選手姓名輸入，動態條列帶出符合條件的編號與全名
@@ -1976,29 +1984,6 @@
 
 // 重新綁定前端與後端 Apps Script 的連線橋樑
 // 這段程式碼會去覆蓋你原本網頁中跳出「連線失敗」的舊連線函式
-
-function callBackendAPI(action, payload, successCallback, failureCallback) {
-  var successHandler = function(response) {
-    if (successCallback) successCallback(response);
-  };
-  var failureHandler = function(error) {
-    console.error("呼叫後端發生錯誤:", error);
-    if (failureCallback) failureCallback(error);
-  };
-
-  // 🎯 全面改採 Web API 的標準 POST 通訊，徹底跟 google.script.run 說再見！
-  fetch(BACKEND_API_URL, {
-    method: "POST",
-    mode: "cors",
-    redirect: "follow",
-    body: JSON.stringify({ action: action, payload: payload })
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(data) { successHandler(data); })
-  .catch(function(err) { failureHandler(err); });
-}
-
-
 
   </script>
 </body>
